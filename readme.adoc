@@ -1,0 +1,12 @@
+image:https://img.shields.io/github/license/just-sultanov/ninja.platform[license,link=license]
+
+== ninja.platform
+
+=== Documentation
+
+TBD
+
+=== License
+
+Copyright © 2020-2021 Ilshat Sultanov.
+Distributed under the Eclipse Public License version 1.0.
