@@ -324,7 +324,7 @@
      Usage:
       * (safe (/ 1 0))                                ;; => nil
       * (safe (/ 1 0) #(ex-message %))                ;; => \"Divide by zero\"
-      * (safe (/ 1 0) #(as-exception (ex-message %))) ;; => => #ninja/response{:type :exception, :data \"Divide by zero\", :meta nil}"
+      * (safe (/ 1 0) #(as-exception (ex-message %))) ;; => #ninja/response{:type :exception, :data \"Divide by zero\", :meta nil}"
      {:added "0.0.1"}
      ([body]
        `(try
