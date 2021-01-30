@@ -1,0 +1,14 @@
+.clj-kondo/.cache
+!.clj-kondo/config.edn
+.cpcache
+.cljs_node_repl
+.idea
+!.idea/clojure-deps.xml
+classes
+target
+.DS_Store
+.java-version
+.nrepl-port
+*.iml
+!pom.xml
+*.pom.asc
