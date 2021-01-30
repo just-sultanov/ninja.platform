@@ -4,10 +4,6 @@
 
 SHELL = bash
 
-include .env
-
-
-
 ####
 ## Helpers
 ####
@@ -17,7 +13,7 @@ HEADER_COLOR=\033[36m
 TEXT_COLOR=\033[0m
 
 define header
-	@echo -e '$(HEADER_COLOR)${HEADER_CHAR}'  $(1) '$(TEXT_COLOR)'
+	@echo -e '$(HEADER_COLOR)${HEADER_CHAR}' $(1) '$(TEXT_COLOR)'
 endef
 
 
@@ -45,11 +41,11 @@ help: ## Show help
 
 deps: ## Check for deps updates
 	$(call header, "[${PROJECT_NAME}] Check for deps updates")
-	$(if $(strip $(ARGS)), cd $(ARGS) && clojure -M:project.default/deps:project.updates/deps:project.updates/run, clojure -M:project.default/deps:project.updates/deps:project.updates/run)
+	$(if $(strip $(ARGS)), cd $(ARGS) && clojure -M:project.updates/deps:project.updates/run, clojure -M:project.updates/deps:project.updates/run)
 
 tree: ## Show deps tree
 	$(call header, "[${PROJECT_NAME}] Show deps tree")
-	$(if $(strip $(ARGS)), cd $(ARGS) && clojure -A:project.default/deps -Stree, clojure -A:project.default/deps -Stree)
+	$(if $(strip $(ARGS)), cd $(ARGS) && clojure -Stree, clojure -Stree)
 
 clean: ## Clean
 	$(call header, "[${PROJECT_NAME}] Clean")
@@ -99,7 +95,7 @@ clean-response:
 
 repl-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Run REPL")
-	cd response && clojure -M:project.default/deps:project.bench/deps::project.bench/opts:project.dev/deps:module.dev/paths:project.test.clj/deps:project.test.cljs/deps:module.test/paths --main nrepl.cmdline --middleware '[cider.piggieback/wrap-cljs-repl]'
+	cd response && clojure -M:project.bench/deps:project.bench/opts:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.clj/deps:project.test.cljs/deps:module.test/paths --main nrepl.cmdline --middleware '[cider.piggieback/wrap-cljs-repl]'
 
 lint-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Run linter")
@@ -112,21 +108,21 @@ format-response:
 
 test-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Run tests")
-	cd response && clojure -M:project.default/deps:project.dev/deps:module.dev/paths:project.test.clj/deps:module.test/paths --main kaocha.runner
-	cd response && clojure -M:project.default/deps:project.dev/deps:module.dev/paths:project.test.cljs/deps:module.test/paths --main cljs-test-runner.main --dir src/test/clojure --out target/test-cljs
+	cd response && clojure -M:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.clj/deps:module.test/deps:module.test/paths --main kaocha.runner
+	cd response && clojure -M:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.cljs/deps:module.test/deps:module.test/paths --main cljs-test-runner.main --dir src/test/clojure --out target/test-cljs
 
 pom-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Generate pom")
-	cd response && clojure -X:project.default/deps:deps mvn-pom
+	cd response && clojure -X:deps mvn-pom
 
 jar-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Build jar")
-	cd response && clojure -X:project.default/deps:project.build/deps jar :group-id ${MODULE_NINJA_RESPONSE_GROUP_ID} :artifact-id ${MODULE_NINJA_RESPONSE_ARTIFACT_ID} :version '"${MODULE_NINJA_RESPONSE_VERSION}"' :sync-pom true :jar ${MODULE_NINJA_RESPONSE_JAR}
+	cd response && clojure -X:project.build/deps jar :group-id ${MODULE_NINJA_RESPONSE_GROUP_ID} :artifact-id ${MODULE_NINJA_RESPONSE_ARTIFACT_ID} :version '"${MODULE_NINJA_RESPONSE_VERSION}"' :sync-pom true :jar ${MODULE_NINJA_RESPONSE_JAR}
 
 install-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Install jar")
-	cd response && clojure -X:project.default/deps:project.deploy/deps :installer :local :sign-releases? true :artifact '"${MODULE_NINJA_RESPONSE_JAR}"'
+	cd response && clojure -X:project.deploy/deps :installer :local :sign-releases? true :artifact '"${MODULE_NINJA_RESPONSE_JAR}"'
 
 deploy-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Deploy jar")
-	cd response && clojure -X:project.default/deps:project.deploy/deps :installer :remote :sign-releases? true :artifact '"${MODULE_NINJA_RESPONSE_JAR}"'
+	cd response && clojure -X:project.deploy/deps :installer :remote :sign-releases? true :artifact '"${MODULE_NINJA_RESPONSE_JAR}"'

@@ -5,11 +5,12 @@
       <set>
         <option value="module.dev/deps" />
         <option value="module.dev/paths" />
+        <option value="module.test/deps" />
         <option value="module.test/paths" />
         <option value="project.bench/deps" />
         <option value="project.bench/opts" />
-        <option value="project.default/deps" />
         <option value="project.dev/deps" />
+        <option value="project.test/deps" />
         <option value="project.test.clj/deps" />
         <option value="project.test.cljs/deps" />
       </set>

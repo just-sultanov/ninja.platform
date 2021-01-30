@@ -3,4 +3,6 @@
  :deps    {org.clojure/clojure {:mvn/version "1.10.2"}}
 
  :aliases {:module.dev/paths  {:extra-paths ["src/dev/clojure" "src/dev/resources"]}
-           :module.test/paths {:extra-paths ["src/test/clojure" "src/test/resources"]}}}
+           :module.dev/deps   {:extra-deps {org.clojure/clojurescript {:mvn/version "1.10.773"}}}
+           :module.test/paths {:extra-paths ["src/test/clojure" "src/test/resources"]}
+           :module.test/deps  {}}}
