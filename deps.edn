@@ -1,0 +1,30 @@
+{:mvn/repos {"central" {:url "https://repo1.maven.org/maven2/"}
+             "clojars" {:url "https://clojars.org/repo"}}
+
+ :aliases   {:project.default/deps   {:replace-deps {org.clojure/clojure       {:mvn/version "1.10.2"}
+                                                     org.clojure/clojurescript {:mvn/version "1.10.773"}}}
+
+             :project.dev/deps       {:extra-deps {nrepl/nrepl      {:mvn/version "0.8.3"}
+                                                   hashp/hashp      {:mvn/version "0.2.0"}
+                                                   cider/piggieback {:mvn/version "0.5.2"}}}
+
+             :project.bench/deps     {:extra-deps {criterium/criterium                      {:mvn/version "0.4.6"}
+                                                   com.clojure-goes-fast/clj-async-profiler {:mvn/version "0.5.0"}}}
+             :project.bench/opts     {:jvm-opts ["-server" "-Xmx4096m" "-Dclojure.compiler.direct-linking=true"]}
+
+             :project.test.clj/deps  {:extra-deps {org.clojure/test.check        {:mvn/version "1.1.0"}
+                                                   lambdaisland/kaocha           {:mvn/version "1.0.732"}
+                                                   lambdaisland/kaocha-cloverage {:mvn/version "1.0.75"}}}
+
+             :project.test.cljs/deps {:extra-deps {olical/cljs-test-runner {:mvn/version "3.8.0"}}}
+
+             :project.build/deps     {:extra-deps {seancorfield/depstar {:mvn/version "2.0.171"}}
+                                      :ns-default hf.depstar
+                                      :exec-args  {}}
+
+             :project.deploy/deps    {:extra-deps {slipset/deps-deploy {:mvn/version "0.1.5"}}
+                                      :exec-fn    deps-deploy.deps-deploy/deploy
+                                      :exec-args  {}}
+
+             :project.updates/deps   {:extra-deps {antq/antq {:mvn/version "0.10.2"}}}
+             :project.updates/run    {:main-opts ["--main" "antq.core"]}}}
