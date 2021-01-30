@@ -79,6 +79,10 @@ install: ## Install jar
 	$(call header, "[${PROJECT_NAME}] Install jar")
 	$(if $(strip $(ARGS)), @make install-$(ARGS), @make install-response)
 
+release: ## Release
+	$(call header, "[${PROJECT_NAME}] Release")
+	$(if $(strip $(ARGS)), @make release-$(ARGS), @make release-response)
+
 deploy: ## Deploy jar
 	$(call header, "[${PROJECT_NAME}] Deploy jar")
 	$(if $(strip $(ARGS)), @make deploy-$(ARGS), @make deploy-response)
@@ -122,6 +126,11 @@ jar-response:
 install-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Install jar")
 	cd response && clojure -X:project.deploy/deps :installer :local :sign-releases? true :artifact '"${MODULE_NINJA_RESPONSE_JAR}"'
+
+release-response:
+	$(call header, "[${MODULE_NINJA_RESPONSE}] Release")
+	$(if $(strip $(shell git status --porcelain 2>/dev/null | grep response)),$(error You must commit all changes before bumping the project version. Bump failed),)
+	git tag --annotate -m "[${MODULE_NINJA_RESPONSE}] Release version v${MODULE_NINJA_RESPONSE_VERSION}" ${MODULE_NINJA_RESPONSE_VERSION}
 
 deploy-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Deploy jar")
