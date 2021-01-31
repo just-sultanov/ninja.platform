@@ -71,3 +71,70 @@
         (sut/remove-anomaly! type)
         (is (false? (sut/error? res)))
         (is (= "#ninja/response{:type :response, :data 42, :meta {:some :meta}}" (str res) (pr-str res)))))))
+
+
+(deftest ^:unit response-helpers-test
+  (let [error-helpers   {:error        sut/as-error
+                         :warning      sut/as-warning
+                         :exception    sut/as-exception
+                         :unavailable  sut/as-unavailable
+                         :interrupted  sut/as-interrupted
+                         :incorrect    sut/as-incorrect
+                         :unauthorized sut/as-unauthorized
+                         :forbidden    sut/as-forbidden
+                         :not-found    sut/as-not-found
+                         :unsupported  sut/as-unsupported
+                         :conflict     sut/as-conflict
+                         :busy         sut/as-busy
+                         :unknown      sut/as-unknown}
+        success-helpers {:success  sut/as-success
+                         :found    sut/as-found
+                         :created  sut/as-created
+                         :updated  sut/as-updated
+                         :deleted  sut/as-deleted
+                         :accepted sut/as-accepted}]
+    (testing "error response helpers"
+      (doseq [[type f] error-helpers]
+        (testing type
+          (testing "1-arity - [data]"
+            (let [data 42
+                  res  (f data)]
+              (is (instance? Response res))
+              (is (satisfies? sut/IResponse res))
+              (is (true? (sut/error? res)))
+              (is (= type (sut/type res)))
+              (is (= data (sut/data res)))
+              (is (nil? (sut/meta res)))))
+          (testing "2-arity - [data meta]"
+            (let [data 42
+                  meta {:some :meta}
+                  res  (f data meta)]
+              (is (instance? Response res))
+              (is (satisfies? sut/IResponse res))
+              (is (true? (sut/error? res)))
+              (is (= type (sut/type res)))
+              (is (= data (sut/data res)))
+              (is (= meta (sut/meta res))))))))
+
+    (testing "success response helpers"
+      (doseq [[type f] success-helpers]
+        (testing type
+          (testing "1-arity - [data]"
+            (let [data 42
+                  res  (f data)]
+              (is (instance? Response res))
+              (is (satisfies? sut/IResponse res))
+              (is (false? (sut/error? res)))
+              (is (= type (sut/type res)))
+              (is (= data (sut/data res)))
+              (is (nil? (sut/meta res)))))
+          (testing "2-arity - [data meta]"
+            (let [data 42
+                  meta {:some :meta}
+                  res  (f data meta)]
+              (is (instance? Response res))
+              (is (satisfies? sut/IResponse res))
+              (is (false? (sut/error? res)))
+              (is (= type (sut/type res)))
+              (is (= data (sut/data res)))
+              (is (= meta (sut/meta res))))))))))
