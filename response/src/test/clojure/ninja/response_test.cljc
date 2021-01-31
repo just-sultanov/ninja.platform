@@ -1,7 +1,11 @@
 (ns ninja.response-test
   (:require
     [clojure.test :refer [deftest testing is]]
-    [ninja.response :as sut]))
+    [ninja.response :as sut #?@(:cljs [:refer [Response]])])
+  #?(:clj
+     (:import
+       (ninja.response
+         Response))))
 
 
 (deftest ^:unit anomalies-registry-test
@@ -18,15 +22,52 @@
     (is (false? (sut/anomaly? ::bad-request)))))
 
 
-(deftest ^:unit response-helpers-test
-  (let [data     42
-        meta     {:some :meta}
-        warning1 (sut/as-warning data)
-        warning2 (sut/as-warning data meta)]
-    (is (sut/error? warning1))
-    (is (= data (sut/data warning1)))
-    (is (nil? (sut/meta warning1)))
+(deftest ^:unit response-test
+  (testing "as-response"
+    (testing "1-arity - [type]"
+      (let [type :response
+            res  (sut/as-response type)]
+        (is (instance? Response res))
+        (is (satisfies? sut/IResponse res))
+        (is (false? (sut/error? res)))
+        (sut/add-anomaly! type)
+        (is (true? (sut/error? res)))
+        (is (= type (sut/type res)))
+        (is (nil? (sut/data res)))
+        (is (nil? (sut/meta res)))
+        (sut/remove-anomaly! type)
+        (is (false? (sut/error? res)))
+        (is (= "#ninja/response{:type :response, :data nil, :meta nil}" (str res) (pr-str res)))))
 
-    (is (sut/error? warning2))
-    (is (= data (sut/data warning2)))
-    (is (= meta (sut/meta warning2)))))
+    (testing "2-arity - [type data]"
+      (let [type :response
+            data 42
+            res  (sut/as-response type data)]
+        (is (instance? Response res))
+        (is (satisfies? sut/IResponse res))
+        (is (false? (sut/error? res)))
+        (sut/add-anomaly! type)
+        (is (true? (sut/error? res)))
+        (is (= type (sut/type res)))
+        (is (= data (sut/data res)))
+        (is (nil? (sut/meta res)))
+        (sut/remove-anomaly! type)
+        (is (false? (sut/error? res)))
+        (is (= "#ninja/response{:type :response, :data 42, :meta nil}" (str res) (pr-str res)))))
+
+    (testing "3-arity - [type data meta]"
+      (let [type :response
+            data 42
+            meta {:some :meta}
+            res  (sut/as-response type data meta)]
+        (is (instance? Response res))
+        (is (satisfies? sut/IResponse res))
+        (is (false? (sut/error? res)))
+        (sut/add-anomaly! type)
+        (is (true? (sut/error? res)))
+        (is (= type (sut/type res)))
+        (is (= data (sut/data res)))
+        (is (= meta (sut/meta res)))
+        (sut/remove-anomaly! type)
+        (is (false? (sut/error? res)))
+        (is (= "#ninja/response{:type :response, :data 42, :meta {:some :meta}}" (str res) (pr-str res)))))))
