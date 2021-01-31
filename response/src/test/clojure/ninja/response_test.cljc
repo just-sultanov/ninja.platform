@@ -4,6 +4,20 @@
     [ninja.response :as sut]))
 
 
+(deftest ^:unit anomalies-registry-test
+  (testing "expected `false` when an anomaly is not registered"
+    (is (false? (sut/anomaly? ::bad-request))))
+
+  (testing "expected `true` when a new anomaly is registered"
+    (sut/add-anomaly! ::bad-request)
+    (is (true? (sut/anomaly? ::bad-request))))
+
+  (testing "expected `false` after an anomaly is unregistered"
+    (is (true? (sut/anomaly? ::bad-request)))
+    (sut/remove-anomaly! ::bad-request)
+    (is (false? (sut/anomaly? ::bad-request)))))
+
+
 (deftest ^:unit response-helpers-test
   (let [data     42
         meta     {:some :meta}
