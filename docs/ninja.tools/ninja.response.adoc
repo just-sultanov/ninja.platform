@@ -1,3 +1,5 @@
+image:https://img.shields.io/clojars/v/ninja.platform/response.svg[clojars,link=https://clojars.org/ninja.platform/response]
+
 == ninja.platform/response
 
 A Clojure(Script) library for the unified responses.
