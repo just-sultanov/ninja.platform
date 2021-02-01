@@ -146,9 +146,43 @@
           boom! #(throw (ex-info msg {}))
           res1  (sut/safe (boom!))
           res2  (sut/safe (boom!) #(sut/as-exception (ex-message %)))]
+      (is (false? (sut/error? res1)))
       (is (nil? (sut/type res1)))
       (is (nil? (sut/data res1)))
       (is (nil? (sut/meta res1)))
+      (is (true? (sut/error? res2)))
       (is (= :exception (sut/type res2)))
       (is (= msg (sut/data res2)))
       (is (nil? (sut/meta res2))))))
+
+
+(deftest ^:unit response-protocol-extension-test
+  (testing "Object should be satisfied with IResponse protocol"
+    (doseq [x [nil true false 1 #?(:clj 1/2) \c "string" :keyword ::keyword 'symbol 'user/symbol '() [] #{}]]
+      (is (false? (sut/error? x)))
+      (is (nil? (sut/type x)))
+      (is (= x (sut/data x)))
+      (is (nil? (sut/meta x)))))
+
+  (testing "Hash-maps should be satisfied with IResponse protocol"
+    (testing "expected an error response"
+      (let [type :forbidden
+            data "some data"
+            meta {:some :meta}]
+        (doseq [x [{:type type, :data data, :meta meta}
+                   (hash-map :type type, :data data, :meta meta)]]
+          (is (true? (sut/error? x)))
+          (is (= type (sut/type x)))
+          (is (= data (sut/data x)))
+          (is (= meta (sut/meta x))))))
+
+    (testing "expected a success response"
+      (let [type ::ok
+            data "some data"
+            meta {:some :meta}]
+        (doseq [x [{:type type, :data data, :meta meta}
+                   (hash-map :type type, :data data, :meta meta)]]
+          (is (false? (sut/error? x)))
+          (is (= type (sut/type x)))
+          (is (= data (sut/data x)))
+          (is (= meta (sut/meta x))))))))
