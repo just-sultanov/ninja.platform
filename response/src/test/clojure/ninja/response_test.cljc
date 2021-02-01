@@ -37,7 +37,12 @@
         (is (nil? (sut/meta res)))
         (sut/remove-anomaly! type)
         (is (false? (sut/error? res)))
-        (is (= "#ninja/response{:type :response, :data nil, :meta nil}" (str res) (pr-str res)))))
+        (is (= "#ninja/response{:type :response, :data nil, :meta nil}" (str res) (pr-str res)))
+
+        (testing "should be returned an error response after changing the response type"
+          (is (true? (sut/error? (assoc res :type :error))))
+          (is (= 42 (sut/data (assoc res :data 42))))
+          (is (= {:some {:meta :data}} (sut/meta (update res :meta assoc-in [:some :meta] :data)))))))
 
     (testing "2-arity - [type data]"
       (let [type :response
@@ -53,7 +58,10 @@
         (is (nil? (sut/meta res)))
         (sut/remove-anomaly! type)
         (is (false? (sut/error? res)))
-        (is (= "#ninja/response{:type :response, :data 42, :meta nil}" (str res) (pr-str res)))))
+        (is (= "#ninja/response{:type :response, :data 42, :meta nil}" (str res) (pr-str res)))
+
+        (testing "should be returned an error response after changing the response type"
+          (is (true? (sut/error? (assoc res :type :error)))))))
 
     (testing "3-arity - [type data meta]"
       (let [type :response
@@ -70,7 +78,10 @@
         (is (= meta (sut/meta res)))
         (sut/remove-anomaly! type)
         (is (false? (sut/error? res)))
-        (is (= "#ninja/response{:type :response, :data 42, :meta {:some :meta}}" (str res) (pr-str res)))))))
+        (is (= "#ninja/response{:type :response, :data 42, :meta {:some :meta}}" (str res) (pr-str res)))
+
+        (testing "should be returned an error response after changing the response type"
+          (is (true? (sut/error? (assoc res :type :error)))))))))
 
 
 (deftest ^:unit response-helpers-test
@@ -165,7 +176,7 @@
       (is (nil? (sut/meta x)))))
 
   (testing "Hash-maps should be satisfied with IResponse protocol"
-    (testing "expected an error response"
+    (testing "should be returned an error response"
       (let [type :forbidden
             data "some data"
             meta {:some :meta}]
@@ -174,9 +185,12 @@
           (is (true? (sut/error? x)))
           (is (= type (sut/type x)))
           (is (= data (sut/data x)))
-          (is (= meta (sut/meta x))))))
+          (is (= meta (sut/meta x)))
 
-    (testing "expected a success response"
+          (testing "should be returned a success response after changing the response type"
+            (is (false? (sut/error? (assoc x :type ::ok))))))))
+
+    (testing "should be returned a success response"
       (let [type ::ok
             data "some data"
             meta {:some :meta}]
@@ -185,4 +199,7 @@
           (is (false? (sut/error? x)))
           (is (= type (sut/type x)))
           (is (= data (sut/data x)))
-          (is (= meta (sut/meta x))))))))
+          (is (= meta (sut/meta x)))
+
+          (testing "should be returned an error response after changing the response type"
+            (is (true? (sut/error? (assoc x :type :forbidden))))))))))
