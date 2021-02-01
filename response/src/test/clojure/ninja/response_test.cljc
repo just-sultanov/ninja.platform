@@ -138,3 +138,17 @@
               (is (= type (sut/type res)))
               (is (= data (sut/data res)))
               (is (= meta (sut/meta res))))))))))
+
+
+(deftest ^:unit macros-helpers-test
+  (testing "exceptions should be caught"
+    (let [msg   "surprise!"
+          boom! #(throw (ex-info msg {}))
+          res1  (sut/safe (boom!))
+          res2  (sut/safe (boom!) #(sut/as-exception (ex-message %)))]
+      (is (nil? (sut/type res1)))
+      (is (nil? (sut/data res1)))
+      (is (nil? (sut/meta res1)))
+      (is (= :exception (sut/type res2)))
+      (is (= msg (sut/data res2)))
+      (is (nil? (sut/meta res2))))))
