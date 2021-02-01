@@ -20,7 +20,7 @@ ninja.platform/response {:mvn/version "0.0.1-alpha4"}
 
 === Library API 
 
-This library is very simple.
+link:../../response/src/main/clojure/ninja/response.cljc[This library] is very simple.
 It doesn't have any wrappers or types.
 An as a unified response, it is used a plain `defrecord`.
 It's very fast - without any overhead.
