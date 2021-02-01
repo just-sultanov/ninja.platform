@@ -2,11 +2,15 @@ image:https://img.shields.io/github/license/just-sultanov/ninja.platform[license
 
 == ninja.platform
 
-=== Documentation
+> Build up projects like a ninja.
+> This repository includes useful libraries (aka ninja tools) for everyday use.
 
-TBD
+=== ninja tools
+
+- link:docs/ninja.tools/ninja.response.adoc[ninja.platform/response] - a Clojure(Script) library for the unified responses.
 
 === License
 
-Copyright © 2020-2021 Ilshat Sultanov.
+Copyright © 2021 Ilshat Sultanov.
+
 Distributed under the Eclipse Public License version 1.0.
