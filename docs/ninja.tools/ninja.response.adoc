@@ -1,3 +1,5 @@
+:figure-caption!:
+
 image:https://img.shields.io/clojars/v/ninja.platform/response.svg[clojars,link=https://clojars.org/ninja.platform/response]
 
 == ninja.platform/response
@@ -9,12 +11,16 @@ A Clojure(Script) library for the unified responses.
 
 Add the following dependency in your project:
 
+.project.clj or build.boot
 [source,clojure]
 ----
-;; project.clj or build.boot
-[ninja.platform/response "0.0.1-alpha4"]
 
-;; deps.edn
+[ninja.platform/response "0.0.1-alpha4"]
+----
+
+.deps.edn
+[source,clojure]
+----
 ninja.platform/response {:mvn/version "0.0.1-alpha4"}
 ----
 
@@ -28,12 +34,12 @@ You can use any functions for the work.
 If you need you can implement your own unified response - just implement `ninja.response.IResponse` protocol.
 If you don't have enough predefined anomalies, just add new types of anomalies using the `add-anomaly!` or delete an existing one using the `remove-anomaly!` function.
 
-The entire library API is shown below.
-
+.Library API
 image::assets/ninja.response/api.png[API]
 
-=== Examples
+=== Example
 
+.ninja.sandbox.cljc
 [source,clojure]
 ----
 (ns ninja.sandbox
