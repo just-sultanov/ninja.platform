@@ -2,8 +2,9 @@ image:https://img.shields.io/github/license/just-sultanov/ninja.platform[license
 
 == ninja.platform
 
-> Build up projects like a ninja.
-> This repository includes useful libraries (aka ninja tools) for everyday use.
+Build up projects like a ninja. This repository includes useful libraries (aka ninja tools) for everyday use.
+
+image:docs/design/logotype.full.transparent.png[logotype,800]
 
 === ninja tools
 
