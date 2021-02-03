@@ -180,7 +180,7 @@ install-schema:
 release-schema:
 	$(call header, "[${MODULE_NINJA_SCHEMA}] Release")
 	$(if $(strip $(shell git status --porcelain 2>/dev/null | grep schema)),$(error You must commit all changes before bumping the project version. Bump failed),)
-	git tag --annotate -m "Release ${MODULE_NINJA_SCHEMA_ARTIFACT_ID}${MODULE_NINJA_SCHEMA_VERSION}" ${MODULE_NINJA_SCHEMA_ARTIFACT_ID}/${MODULE_NINJA_SCHEMA_VERSION}
+	git tag --annotate -m "Release ${MODULE_NINJA_SCHEMA_ARTIFACT_ID}/${MODULE_NINJA_SCHEMA_VERSION}" ${MODULE_NINJA_SCHEMA_ARTIFACT_ID}/${MODULE_NINJA_SCHEMA_VERSION}
 
 deploy-schema:
 	$(call header, "[${MODULE_NINJA_SCHEMA}] Deploy jar")
