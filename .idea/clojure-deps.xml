@@ -10,9 +10,9 @@
         <option value="project.bench/deps" />
         <option value="project.bench/opts" />
         <option value="project.dev/deps" />
-        <option value="project.test/deps" />
         <option value="project.test.clj/deps" />
         <option value="project.test.cljs/deps" />
+        <option value="project.test/deps" />
       </set>
     </option>
   </component>
@@ -21,6 +21,7 @@
       <list>
         <option value="file://$PROJECT_DIR$/deps.edn" />
         <option value="file://$PROJECT_DIR$/response/deps.edn" />
+        <option value="file://$PROJECT_DIR$/schema/deps.edn" />
       </list>
     </option>
   </component>

@@ -8,7 +8,8 @@ image:docs/design/logotype.full.transparent.png[logotype,800]
 
 === ninja tools
 
-- link:docs/ninja.tools/ninja.response.adoc[ninja.platform/response] - a Clojure(Script) library for the unified responses.
+- link:docs/ninja.tools/ninja.response.adoc[ninja.platform/response] - a Clojure(Script) library for the unified responses
+- link:docs/ninja.tools/ninja.schema.adoc[ninja.platform/schema] - a Clojure(Script) library for the data schemas
 
 === License
 
