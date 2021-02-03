@@ -125,7 +125,7 @@ jar-response:
 
 install-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Install jar")
-	cd response && clojure -X:project.deploy/deps :installer :local :sign-releases? true :artifact '"${MODULE_NINJA_RESPONSE_JAR}"'
+	cd response && clojure -X:project.deploy/deps :installer :local :artifact '"${MODULE_NINJA_RESPONSE_JAR}"'
 
 release-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Release")
@@ -134,4 +134,4 @@ release-response:
 
 deploy-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Deploy jar")
-	cd response && clojure -X:project.deploy/deps :installer :remote :sign-releases? true :artifact '"${MODULE_NINJA_RESPONSE_JAR}"'
+	cd response && clojure -X:project.deploy/deps :installer :remote :artifact '"${MODULE_NINJA_RESPONSE_JAR}"'
