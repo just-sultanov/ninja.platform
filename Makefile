@@ -130,7 +130,7 @@ install-response:
 release-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Release")
 	$(if $(strip $(shell git status --porcelain 2>/dev/null | grep response)),$(error You must commit all changes before bumping the project version. Bump failed),)
-	git tag --annotate -m "[${MODULE_NINJA_RESPONSE}] Release version v${MODULE_NINJA_RESPONSE_VERSION}" ${MODULE_NINJA_RESPONSE_ARTIFACT_ID}/${MODULE_NINJA_RESPONSE_VERSION}
+	git tag --annotate -m "Release ${MODULE_NINJA_RESPONSE_ARTIFACT_ID}/${MODULE_NINJA_RESPONSE_VERSION}" ${MODULE_NINJA_RESPONSE_ARTIFACT_ID}/${MODULE_NINJA_RESPONSE_VERSION}
 
 deploy-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Deploy jar")
