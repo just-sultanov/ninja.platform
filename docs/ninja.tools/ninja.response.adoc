@@ -77,8 +77,8 @@ image::assets/ninja.response/api.png[API]
 
 
 ;; You can also use a usual hash-map like this
-;; Q: Why are keywords without a namespace?
-;; A: This is done so that there are no differences between the usual hash-map and #ninja.response
+;; Q: Why are keywords (:type, :data and :meta) without a namespace?
+;; A: This is done so that there are no differences between the usual hash-map and #ninja/response (faster)
 (def m
   {:type :error
    :data "some data" 
