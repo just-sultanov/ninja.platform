@@ -45,7 +45,7 @@ deps: ## Check for deps updates
 
 tree: ## Show deps tree
 	$(call header, "[${PROJECT_NAME}] Show deps tree")
-	$(if $(strip $(ARGS)), cd $(ARGS) && clojure -Stree, clojure -Stree)
+	$(if $(strip $(ARGS)), cd $(ARGS) && clojure -X:deps tree, clojure -X:deps tree)
 
 clean: ## Clean
 	$(call header, "[${PROJECT_NAME}] Clean")
