@@ -1,5 +1,80 @@
-= Changelog
+== Changelog
 
-== Unreleased
+=== ninja tools
 
-TBD
+- xref:response[ninja.platform/response]
+
+[[response]]
+=== ninja.platform/response
+
+==== Released
+
+===== v0.1.0 (2021-02-05)
+
+====== Added
+
+A very simple API for the unified responses.
+
+
+Anomalies registry::
+- `ninja.response/add-anomaly!` - Adds a new anomaly to the anomalies registry
+- `ninja.response/remove-anomaly!` - Removes an anomaly from the anomalies registry
+- `ninja.response/anomaly?` - Returns `true` if `x` is an anomaly.
+Otherwise, `false`
+
+
+Predefined anomalies::
+- `:error`
+- `:warning`
+- `:exception`
+- `:unavailable`
+- `:interrupted`
+- `:incorrect`
+- `:unauthorized`
+- `:forbidden`
+- `:not-found`
+- `:unsupported`
+- `:conflict`
+- `:busy`
+- `:unknown`
+
+
+Unified response::
+- `ninja.response/IResponse` - A unified response protocol
+- `ninja.response/Response` - A default implementation of the unified response protocol
+
+
+Unified response builder::
+
+- `ninja.response/as-response` - Returns an instance of a unified response
+
+
+Unified error response helpers::
+
+- `ninja.response/as-error` - Returns a unified `error` response
+- `ninja.response/as-warning` - Returns a unified `warning` response
+- `ninja.response/as-exception` - Returns a unified `exception` response
+- `ninja.response/as-unavailable` - Returns a unified `unavailable` response
+- `ninja.response/as-interrupted` - Returns a unified `interrupted` response
+- `ninja.response/as-incorrect` - Returns a unified `incorrect` response
+- `ninja.response/as-unauthorized` - Returns a unified `unauthorized` response
+- `ninja.response/as-forbidden` - Returns a unified `forbidden` response
+- `ninja.response/as-not-found` - Returns a unified `not-found` response
+- `ninja.response/as-unsupported` - Returns a unified `unsupported` response
+- `ninja.response/as-conflict` - Returns a unified `conflict` response
+- `ninja.response/as-busy` - Returns a unified `busy` response
+- `ninja.response/as-unknown` - Returns a unified `unknown` response
+
+
+Unified success response helpers::
+
+- `ninja.response/as-success` - Returns a unified `success` response
+- `ninja.response/as-found` - Returns a unified `found` response
+- `ninja.response/as-created` - Returns a unified `created` response
+- `ninja.response/as-updated` - Returns a unified `updated` response
+- `ninja.response/as-deleted` - Returns a unified `deleted` response
+- `ninja.response/as-accepted` - Returns a unified `accepted` response
+
+
+Helper macros::
+- `ninja.response/safe` - Extended version of try-catch
