@@ -15,13 +15,13 @@ Add the following dependency in your project:
 [source,clojure]
 ----
 
-[ninja.platform/response "0.0.1-alpha5"]
+[ninja.platform/response "0.1.0"]
 ----
 
 .deps.edn
 [source,clojure]
 ----
-ninja.platform/response {:mvn/version "0.0.1-alpha5"}
+ninja.platform/response {:mvn/version "0.1.0"}
 ----
 
 === Library API 
