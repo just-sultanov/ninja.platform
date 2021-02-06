@@ -45,12 +45,10 @@ Unified response::
 
 
 Unified response builder::
-
 - `ninja.response/as-response` - Returns an instance of a unified response
 
 
 Unified error response helpers::
-
 - `ninja.response/as-error` - Returns a unified `error` response
 - `ninja.response/as-warning` - Returns a unified `warning` response
 - `ninja.response/as-exception` - Returns a unified `exception` response
@@ -67,7 +65,6 @@ Unified error response helpers::
 
 
 Unified success response helpers::
-
 - `ninja.response/as-success` - Returns a unified `success` response
 - `ninja.response/as-found` - Returns a unified `found` response
 - `ninja.response/as-created` - Returns a unified `created` response
