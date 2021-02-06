@@ -65,7 +65,7 @@ image::assets/ninja.response/api.png[API]
 
 
 (r/error? res) ;; => false
-(r/type res) ;; => :ninja.sandbox/error
+(r/type res) ;; => :ninja.sandbox/response
 (r/data res) ;; => "some data"
 (r/meta res) ;; => {:some :meta}
 
