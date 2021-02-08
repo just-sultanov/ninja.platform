@@ -5,6 +5,7 @@
 
 image:https://img.shields.io/github/license/just-sultanov/ninja.platform[license,link=license]
 image:https://codecov.io/gh/just-sultanov/ninja.platform/branch/master/graph/badge.svg?token=HVEZAXE27E)[codecov,link=https://codecov.io/gh/just-sultanov/ninja.platform]
+image:https://github.com/just-sultanov/ninja.platform/workflows/build/badge.svg[build]
 
 == ninja.platform
 
