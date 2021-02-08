@@ -1,7 +1,8 @@
 coverage:
   status:
     project:
-      default: off
+      default:
+        target: auto
       response:
         target: 90%
         flags:
@@ -11,12 +12,20 @@ coverage:
         flags:
           - schema
 
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: false
+  require_base: yes
+  require_head: yes
+  branches: null
+
 flags:
   response:
     paths:
-      - response/
+      - response
     carryforward: true
   schema:
     paths:
-      - schema/
+      - schema
     carryforward: true
