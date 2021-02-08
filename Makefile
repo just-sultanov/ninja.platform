@@ -4,6 +4,10 @@
 
 SHELL = bash
 
+include .env
+
+
+
 ####
 ## Helpers
 ####
@@ -143,7 +147,6 @@ release-response:
 deploy-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Deploy jar")
 	cd response && clojure -X:project.deploy/deps :installer :remote :artifact '"${MODULE_NINJA_RESPONSE_JAR}"'
-
 
 
 
