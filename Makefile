@@ -121,7 +121,7 @@ test-response:
 
 coverage-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Upload coverage")
-	bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -f response/target/coverage/codecov.json -F response
+	bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -F response -f response/target/coverage/codecov.json
 
 pom-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Generate pom")
@@ -175,7 +175,7 @@ test-schema:
 
 coverage-schema:
 	$(call header, "[${MODULE_NINJA_SCHEMA}] Upload coverage")
-	bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -f schema/target/coverage/codecov.json -F schema
+	bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -F schema -f schema/target/coverage/codecov.json
 
 pom-schema:
 	$(call header, "[${MODULE_NINJA_SCHEMA}] Generate pom")
