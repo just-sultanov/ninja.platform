@@ -1,0 +1,53 @@
+name: test
+
+on: [ push, pull_request ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    strategy:
+      matrix:
+        java: [ 8, 11, 15 ]
+    name: openjdk-${{ matrix.java }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup openjdk
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: Setup clojure
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: latest
+
+      - name: Cache deps
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/deps.edn') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+
+      - name: Cleanup
+        run: make clean
+
+      - name: Run tests
+        run: make test
+
+      - name: Upload coverage
+        run: make coverage
+
+      - name: Update pom.xml
+        run: make pom
+
+      - name: Build jar
+        run: make jar
+
+      - name: Install locally
+        run: make install
