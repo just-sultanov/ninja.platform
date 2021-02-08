@@ -1,0 +1,22 @@
+coverage:
+  status:
+    project:
+      default: off
+      response:
+        target: 90%
+        flags:
+          - response
+      schema:
+        target: 80%
+        flags:
+          - schema
+
+flags:
+  response:
+    paths:
+      - response/
+    carryforward: true
+  schema:
+    paths:
+      - schema/
+    carryforward: true
