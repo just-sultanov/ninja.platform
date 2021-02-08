@@ -1,0 +1,32 @@
+name: lint
+
+on: [ push, pull_request ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    env:
+      CLJ_KONDO_VERSION: 2021.01.20
+      CLJSTYLE_VERSION: 0.14.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup clj-kondo
+        run: |
+          wget https://github.com/borkdude/clj-kondo/releases/download/v${CLJ_KONDO_VERSION}/clj-kondo-${CLJ_KONDO_VERSION}-linux-amd64.zip
+          unzip clj-kondo-${CLJ_KONDO_VERSION}-linux-amd64.zip -d ${GITHUB_WORKSPACE}/bin
+
+      - name: Setup cljstyle
+        run: |
+          wget https://github.com/greglook/cljstyle/releases/download/${CLJSTYLE_VERSION}/cljstyle_${CLJSTYLE_VERSION}_linux.tar.gz
+          tar -xf cljstyle_${CLJSTYLE_VERSION}_linux.tar.gz -C ${GITHUB_WORKSPACE}/bin
+
+      - name: Setup a system path
+        run: echo "${GITHUB_WORKSPACE}/bin" >> $GITHUB_PATH
+
+      - name: Cleanup
+        run: make clean
+
+      - name: Run linters
+        run: make lint
