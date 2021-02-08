@@ -67,6 +67,10 @@ test: ## Run tests
 	$(call header, "[${PROJECT_NAME}] Run tests")
 	$(if $(strip $(ARGS)), @make test-$(ARGS), @make test-response test-schema)
 
+coverage: ## Upload coverage
+	$(call header, "[${PROJECT_NAME}] Upload coverage")
+	$(if $(strip $(ARGS)), @make coverage-$(ARGS), @make coverage-response coverage-schema)
+
 pom: ## Generate pom
 	$(call header, "[${PROJECT_NAME}] Generate pom")
 	$(if $(strip $(ARGS)), @make pom-$(ARGS), @make pom-response pom-schema)
@@ -114,6 +118,10 @@ test-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Run tests")
 	cd response && clojure -M:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.clj/deps:module.test/deps:module.test/paths --main kaocha.runner
 	cd response && clojure -M:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.cljs/deps:module.test/deps:module.test/paths --main cljs-test-runner.main --dir src/test/clojure --out target/test-cljs
+
+coverage-response:
+	$(call header, "[${MODULE_NINJA_RESPONSE}] Upload coverage")
+	bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -f response/target/coverage/codecov.json -F response
 
 pom-response:
 	$(call header, "[${MODULE_NINJA_RESPONSE}] Generate pom")
@@ -164,6 +172,10 @@ test-schema:
 	$(call header, "[${MODULE_NINJA_SCHEMA}] Run tests")
 	cd schema && clojure -M:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.clj/deps:module.test/deps:module.test/paths --main kaocha.runner
 	cd schema && clojure -M:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.cljs/deps:module.test/deps:module.test/paths --main cljs-test-runner.main --dir src/test/clojure --out target/test-cljs
+
+coverage-schema:
+	$(call header, "[${MODULE_NINJA_SCHEMA}] Upload coverage")
+	bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -f schema/target/coverage/codecov.json -F schema
 
 pom-schema:
 	$(call header, "[${MODULE_NINJA_SCHEMA}] Generate pom")
