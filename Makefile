@@ -93,7 +93,7 @@ release: ## Release
 
 deploy: ## Deploy jar
 	$(call header, "[${PROJECT_NAME}] Deploy jar")
-	$(if $(strip $(ARGS)), @make deploy-$(ARGS), $(error "Module name is not specified. Example, `$ make deploy response`"))
+	$(if $(strip $(ARGS)), @make deploy-$(ARGS), @make deploy-response deploy-schema)
 
 
 
