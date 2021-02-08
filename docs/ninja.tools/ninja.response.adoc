@@ -1,5 +1,7 @@
 :figure-caption!:
 
+image:https://codecov.io/gh/just-sultanov/ninja.platform/branch/master/graph/badge.svg?token=HVEZAXE27E&flag=response[codecov,link=https://codecov.io/gh/just-sultanov/ninja.platform]
+image:https://cljdoc.org/badge/ninja.platform/response[cljdoc,link=https://cljdoc.org/d/ninja.platform/response/CURRENT]
 image:https://img.shields.io/clojars/v/ninja.platform/response.svg[clojars,link=https://clojars.org/ninja.platform/response]
 
 == ninja.platform/response
@@ -14,7 +16,6 @@ Add the following dependency in your project:
 .project.clj or build.boot
 [source,clojure]
 ----
-
 [ninja.platform/response "0.1.0"]
 ----
 
