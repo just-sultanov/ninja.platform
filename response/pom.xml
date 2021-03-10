@@ -5,7 +5,7 @@
   <artifactId>response</artifactId>
   <name>response</name>
   <packaging>jar</packaging>
-  <version>0.1.0</version>
+  <version>0.1.1-SNAPSHOT</version>
   <url>https://github.com/just-sultanov/ninja.platform</url>
   <description>A Clojure(Script) library for the unified responses.</description>
   <licenses>
@@ -25,7 +25,7 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.10.2</version>
+      <version>1.10.3</version>
     </dependency>
   </dependencies>
   <build>
@@ -41,7 +41,7 @@
     <url>https://github.com/just-sultanov/ninja.platform</url>
     <connection>scm:git:git://github.com/just-sultanov/ninja.platform.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/just-sultanov/ninja.platform.git</developerConnection>
-    <tag>response/0.1.0</tag>
+    <tag>response/0.1.1-SNAPSHOT</tag>
   </scm>
   <distributionManagement>
     <repository>
