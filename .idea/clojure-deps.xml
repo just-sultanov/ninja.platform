@@ -22,6 +22,7 @@
         <option value="file://$PROJECT_DIR$/deps.edn" />
         <option value="file://$PROJECT_DIR$/response/deps.edn" />
         <option value="file://$PROJECT_DIR$/schema/deps.edn" />
+        <option value="file://$PROJECT_DIR$/javac/deps.edn" />
       </list>
     </option>
   </component>
