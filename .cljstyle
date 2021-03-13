@@ -2,5 +2,6 @@
 
  :rules {:blank-lines {:max-consecutive 3}
          :types       {:enabled? false}
-         :namespaces  {:import-break-width 80}
-         :indentation {:indents {#".*" [[:inner 0]]}}}}
+         :namespaces  {:import-break-width 130}
+         :indentation {:indents {#".*" [[:inner 0]]
+                                 as->  [[:inner 0]]}}}}
