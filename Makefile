@@ -238,7 +238,7 @@ pom-javac:
 
 jar-javac:
 	$(call header, "[${MODULE_NINJA_JAVAC}] Build jar")
-	cd javac && clojure -X:project.build/deps jar :group-id ${MODULE_NINJA_JAVAC_GROUP_ID} :artifact-id ${MODULE_NINJA_JAVAC_ARTIFACT_ID} :version '"${MODULE_NINJA_JAVAC_VERSION}"' :sync-pom true :jar ${MODULE_NINJA_JAVAC_JAR}
+	cd javac && clojure -X:project.build/deps uberjar :group-id ${MODULE_NINJA_JAVAC_GROUP_ID} :artifact-id ${MODULE_NINJA_JAVAC_ARTIFACT_ID} :version '"${MODULE_NINJA_JAVAC_VERSION}"' :sync-pom true :jar ${MODULE_NINJA_JAVAC_JAR}
 
 install-javac:
 	$(call header, "[${MODULE_NINJA_JAVAC}] Install jar")
