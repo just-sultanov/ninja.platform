@@ -1,11 +1,11 @@
 {:paths   ["src/main/clojure" "src/main/resources"]
 
- :deps    {org.clojure/clojure                 {:mvn/version "1.10.3"}
-           org.clojure/tools.deps.alpha        {:mvn/version "0.11.905"}
-           org.clojure/tools.logging           {:mvn/version "1.1.0"}
-           org.apache.logging.log4j/log4j-core {:mvn/version "2.14.1"}}
+ :deps    {org.clojure/clojure          {:mvn/version "1.10.3"}
+           org.clojure/tools.deps.alpha {:mvn/version "0.11.905"}
+           com.brunobonacci/mulog       {:mvn/version "0.6.5"}
+           ninja.platform/response      {:mvn/version "0.1.0"}}
 
  :aliases {:module.dev/paths  {:extra-paths ["src/dev/clojure" "src/dev/resources"]}
            :module.dev/deps   {}
            :module.test/paths {:extra-paths ["src/test/clojure" "src/test/resources"]}
-           :module.test/deps  {:extra-deps {ninja.platform/response {:mvn/version "0.1.0"}}}}}
+           :module.test/deps  {:extra-deps {ninja.platform/schema {:mvn/version "0.0.1-alpha1"}}}}}
