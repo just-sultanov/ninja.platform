@@ -3,6 +3,10 @@ coverage:
     project:
       default:
         target: auto
+      javac:
+        target: 75%
+        flags:
+          - javac
       response:
         target: 90%
         flags:
@@ -21,6 +25,10 @@ comment:
   branches: null
 
 flags:
+  javac:
+    paths:
+      - javac
+    carryforward: true
   response:
     paths:
       - response
