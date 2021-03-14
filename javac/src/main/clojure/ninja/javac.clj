@@ -2,10 +2,13 @@
   (:refer-clojure :exclude [compile])
   (:gen-class)
   (:require
+    [clojure.edn :as edn]
     [clojure.java.io :as io]
     [clojure.string :as string]
     [clojure.tools.deps.alpha :as deps]
-    [clojure.tools.deps.alpha.util.maven :as maven])
+    [clojure.tools.deps.alpha.util.maven :as maven]
+    [com.brunobonacci.mulog :as mu]
+    [ninja.response :as r])
   (:import
     (java.io
       IOException)
@@ -23,10 +26,29 @@
       BasicFileAttributes
       FileAttribute)
     (java.util
-      EnumSet)))
+      EnumSet)
+    (javax.tools
+      JavaCompiler
+      ToolProvider)))
 
 
 (set! *warn-on-reflection* true)
+
+
+(defonce *publisher
+  (atom nil))
+
+
+(defn toggle-publisher!
+  "Toggle `com.brunobonacci.mulog` publisher."
+  [verbose?]
+  (let [stop-fn @*publisher]
+    (cond
+      (and verbose? (nil? stop-fn))
+      (reset! *publisher (mu/start-publisher! {:type :console, :pretty? true}))
+
+      (and (not verbose?) (some? stop-fn))
+      (do (stop-fn) (reset! *publisher nil)))))
 
 
 (defn ^Path make-path
@@ -136,3 +158,111 @@
                                     (instance? FileSystemLoopException e) FileVisitResult/SKIP_SUBTREE
                                     (instance? NoSuchFileException e) FileVisitResult/SKIP_SUBTREE
                                     :else (throw e)))})))
+
+
+(defn make-command
+  "Builds and returns a Java compiler command."
+  [{:keys [classpath target-path compiler-options source-paths]
+    :or   {target-path      "classes"
+           compiler-options []
+           source-paths     []}}]
+  `["-cp" ~classpath
+    ~@compiler-options
+    "-d" ~(str target-path)
+    ~@(map str source-paths)])
+
+
+;; TODO: [2021-03-14, just.sultanov@gmail.com] Set `:verbose?` option to false (by default)
+(defn compile
+  "A simple wrapper for the Java source compiler.
+
+  Params:
+  * `:source-path`      - Path to java sources (Default: \"src/main/java\")
+  * `:target-path`      - Files are compiled to the target path (Default: \"classes\")
+  * `:compiler-options` - Java compiler options (Default: [])
+  * `:deps-map`         - Deps configuration map
+  * `:aliases`          - Additional aliases from `deps.edn` (Default: [])
+  * `:verbose?`         - Print extra info (Default: true)
+  * `:compile?`         - Is compilation enabled?. Can be useful for debugging. (Default: true)"
+  [{:as   options
+    :keys [source-path target-path compiler-options deps-map aliases verbose? compile?]
+    :or   {source-path      "src/main/java"
+           target-path      "classes"
+           compiler-options []
+           aliases          []
+           verbose?         true
+           compile?         true}}]
+  (toggle-publisher! verbose?)
+  (mu/log :ninja.javac.compile/starting :options options)
+  (let [compiler ^JavaCompiler (ToolProvider/getSystemJavaCompiler)]
+    (if-not compiler
+      (let [result {:message "Can't find the Java compiler"
+                    :options options}]
+        (mu/log :ninja.javac.compile/failed :result result)
+        (r/as-error result))
+      (let [source-path  (make-path source-path)
+            target-path  (make-path target-path)
+            source-paths (find-java-paths source-path)
+            classpath    (make-classpath {:deps-map deps-map, :aliases aliases})
+            compile-opts {:classpath        classpath
+                          :target-path      target-path
+                          :compiler-options compiler-options
+                          :source-paths     source-paths}
+            command      (make-command compile-opts)
+            result       {:message      (format "Processed %s files" (count source-paths))
+                          :options      options
+                          :command      command
+                          :compile-opts compile-opts}]
+        (if-not compile?
+          (do
+            (mu/log :ninja.javac.compile/completed :result result)
+            (r/as-success result))
+          (let [_                  (create-dirs! target-path)
+                compilation-result (.run compiler nil nil nil (into-array String command))
+                result             (assoc result :compilation-result compilation-result)]
+            (mu/log :ninja.javac.compile/completed :result result)
+            (if (zero? compilation-result)
+              (r/as-success result)
+              (r/as-error (assoc result :message "Something went wrong")))))))))
+
+
+;; TODO: [2021-03-14, just.sultanov@gmail.com] Add CLI: provide all options and add help
+(defn -main
+  "The entry point to run compiler using `clojure -M`. Use the `compile` function directly."
+  [& [source-path target-path deps-map aliases verbose? compile? & compiler-options]]
+  (let [res (compile
+              {:source-path      source-path
+               :target-path      target-path
+               :deps-map         (edn/read-string deps-map)
+               :compiler-options compiler-options
+               :aliases          (edn/read-string aliases)
+               :verbose?         (edn/read-string verbose?)
+               :compile?         (edn/read-string compile?)})]
+    (if-not (r/error? res)
+      (shutdown-agents)
+      (System/exit 1))))
+
+
+(comment
+  ;; example
+  (compile {:source-path      "src/test/resources/fixtures"
+            :target-path      "target/classes"
+            :compiler-options ["-target" "15"
+                               "-source" "15"
+                               "-Xlint:all"]
+            :aliases          [:module.test/deps] ;; adds `ninja.platform/schema:0.0.1-alpha1` for testing classpath calculation
+            :verbose?         true ;; prints to console
+            :compile?         true})
+
+  ;; a similar command for the main entry point
+  ;; doesn't support the next options: :aliases, :verbose?, :compile?
+  (-main
+    "src/test/resources/fixtures" ;; source-path
+    "target/classes" ;; target-path
+    "nil" ;; deps-map
+    "[:module.test/deps]" ;; aliases
+    "true" ;; verbose?
+    "true" ;; compile?
+    "-target" "15" "-source" "15" "-Xlint:all" ;; compiler-options
+    )
+  )

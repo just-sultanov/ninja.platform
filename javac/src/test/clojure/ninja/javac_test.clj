@@ -2,7 +2,8 @@
   (:require
     [clojure.string :as string]
     [clojure.test :refer [deftest testing is]]
-    [ninja.javac :as sut])
+    [ninja.javac :as sut]
+    [ninja.response :as r])
   (:import
     (java.nio.file
       Path)))
@@ -16,7 +17,7 @@
 
 (deftest make-classpath-test
   (testing "calculate classpath"
-    (let [includes? #(string/includes? % "ninja/platform/response/0.1.0/response-0.1.0.jar")]
+    (let [includes? #(string/includes? % "ninja/platform/schema/0.0.1-alpha1/schema-0.0.1-alpha1.jar")]
       (testing "without any arguments"
         (is (false? (includes? (sut/make-classpath))))
         (is (false? (includes? (sut/make-classpath {:deps-map nil}))))
@@ -65,3 +66,76 @@
       (testing "root directory should be deleted"
         (sut/delete-dirs! root-path)
         (is (false? (sut/exists? root-path)))))))
+
+
+(deftest make-command-test
+  (testing "build compiler command"
+    (testing "with default options"
+      (is (= ["-cp" "some:classpath" "-d" "classes" "fake/Example.java"]
+            (sut/make-command {:classpath    "some:classpath"
+                               :source-paths ["fake/Example.java"]}))))
+    (testing "with all options"
+      (is (= ["-cp" "some:classpath" "-target" "15" "-source" "15" "-Xlint:all" "-d" "target/classes" "fake/Example.java"]
+            (sut/make-command {:classpath        "some:classpath"
+                               :target-path      "target/classes"
+                               :compiler-options ["-target" "15"
+                                                  "-source" "15"
+                                                  "-Xlint:all"]
+                               :source-paths     ["fake/Example.java"]}))))))
+
+
+(deftest compile-test
+  (let [source-path      "src/test/resources/fixtures"
+        target-path      (str "classes-" (System/nanoTime))
+        compiler-options ["-Xlint:all"]
+        aliases          [:module.test/deps]
+        verbose?         false
+        compile?         true
+        options          {:source-path      source-path
+                          :target-path      target-path
+                          :compiler-options compiler-options
+                          :aliases          aliases
+                          :verbose?         verbose?
+                          :compile?         compile?}
+        source-paths     (->> source-path
+                           sut/find-java-paths
+                           (map str)
+                           set)
+        includes?        #(string/includes? % "ninja/platform/schema/0.0.1-alpha1/schema-0.0.1-alpha1.jar")]
+
+    (testing "expected compilation result"
+      (let [{:as res :keys [type data meta]} (sut/compile options)
+            compile-opts (:compile-opts data)
+            command      (:command data)]
+
+        (testing "as a unified response"
+          (is (false? (r/error? res)))
+          (is (= :success type))
+          (is (nil? meta)))
+
+        (testing "with correct message"
+          (is (= "Processed 8 files" (:message data))))
+
+        (testing "with provided options without any changes"
+          (is (= options (:options data))))
+
+        (testing "with zero compilation status"
+          (is (= 0 (:compilation-result data))))
+
+        (testing "with correct compile options"
+          (is (= target-path (str (:target-path compile-opts))))
+          (is (= compiler-options (:compiler-options compile-opts)))
+          (is (every? #(contains? source-paths (str %)) (:source-paths compile-opts)))
+          (is (true? (includes? (:classpath compile-opts)))))
+
+        (testing "with correct command"
+          (is (= 13 (count command)))
+          (is (= "-cp" (first command)))
+          (is (= (:classpath compile-opts) (second command)))
+          (is (true? (includes? (second command))))
+          (is (= compiler-options (take-while (partial not= "-d") (nnext command))))
+          (is (= ["-d" target-path] (->> command nnext (drop-while (partial not= "-d")) (take 2))))
+          (is (every? #(contains? source-paths %) (->> command nnext (drop-while (partial not= target-path)) next))))))
+
+    ;; cleanup
+    (sut/delete-dirs! target-path)))
