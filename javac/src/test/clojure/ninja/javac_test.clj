@@ -48,3 +48,20 @@
       (is (zero? (count (sut/find-java-paths "fake/path")))))
     (testing "in the fixtures directory"
       (is (= 8 (count (sut/find-java-paths "src/test/resources/fixtures")))))))
+
+
+(deftest create-delete-dirs-test
+  (testing "directories creation and deletion"
+    (let [root-path   "a"
+          nested-path (sut/make-path root-path "b/c/d")]
+      (testing "directory shouldn't be exists"
+        (is (false? (sut/exists? nested-path))))
+      (testing "directory should be created"
+        (sut/create-dirs! nested-path)
+        (is (true? (sut/exists? nested-path))))
+      (testing "nested directory should be deleted"
+        (sut/delete-dirs! nested-path)
+        (is (false? (sut/exists? nested-path))))
+      (testing "root directory should be deleted"
+        (sut/delete-dirs! root-path)
+        (is (false? (sut/exists? root-path)))))))

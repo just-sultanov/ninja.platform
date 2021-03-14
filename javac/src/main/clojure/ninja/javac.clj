@@ -7,17 +7,21 @@
     [clojure.tools.deps.alpha :as deps]
     [clojure.tools.deps.alpha.util.maven :as maven])
   (:import
+    (java.io
+      IOException)
     (java.nio.file
       FileSystemLoopException
       FileVisitOption
       FileVisitResult
       FileVisitor
       Files
+      LinkOption
       NoSuchFileException
       Path
       Paths)
     (java.nio.file.attribute
-      BasicFileAttributes)
+      BasicFileAttributes
+      FileAttribute)
     (java.util
       EnumSet)))
 
@@ -27,7 +31,7 @@
 
 (defn ^Path make-path
   "Converts a path string, or a sequence of strings that when joined form a path string, to a Path.
-  Returns an instance of `java.nio.file.Path`"
+  Returns an instance of `java.nio.file.Path`."
   [path & paths]
   (->> paths
     (map str)
@@ -53,17 +57,17 @@
 
 
 (defn file-visitor
-  "Accepts `visitor-fn` and returns an instance of `java.nio.file.FileVisitor`."
-  [visitor-fn]
+  "Accepts handlers and returns an instance of `java.nio.file.FileVisitor`."
+  [{:keys [visit-file-fn visit-file-failed-fn pre-visit-directory-fn post-visit-directory-fn]
+    :or   {pre-visit-directory-fn  (constantly FileVisitResult/CONTINUE)
+           post-visit-directory-fn (constantly FileVisitResult/CONTINUE)
+           visit-file-fn           (constantly FileVisitResult/CONTINUE)
+           visit-file-failed-fn    (constantly FileVisitResult/SKIP_SUBTREE)}}]
   (reify FileVisitor
-    (postVisitDirectory [_ _ _] FileVisitResult/CONTINUE)
-    (preVisitDirectory [_ _ _] FileVisitResult/CONTINUE)
-    (visitFile [_ path attrs] (visitor-fn path attrs))
-    (visitFileFailed [_ _ e]
-      (cond
-        (instance? FileSystemLoopException e) FileVisitResult/SKIP_SUBTREE
-        (instance? NoSuchFileException e) FileVisitResult/SKIP_SUBTREE
-        :else (throw e)))))
+    (preVisitDirectory [_ dir attrs] (pre-visit-directory-fn dir attrs))
+    (visitFile [_ file attrs] (visit-file-fn file attrs))
+    (visitFileFailed [_ file e] (visit-file-failed-fn file e))
+    (postVisitDirectory [_ dir e] (post-visit-directory-fn dir e))))
 
 
 (defn as-path
@@ -74,17 +78,22 @@
 
 (defn find-paths
   "Returns a collection of paths in the given directory filtered using the provided predicate."
-  ([in]
-    (find-paths in (constantly true)))
+  ([root]
+    (find-paths root (constantly true)))
 
-  ([in pred]
-    (let [*paths  (atom [])
-          visitor (file-visitor
-                    (fn [^Path path ^BasicFileAttributes attrs]
-                      (when (pred path attrs)
-                        (swap! *paths conj path))
-                      FileVisitResult/CONTINUE))]
-      (Files/walkFileTree (as-path in) (EnumSet/of FileVisitOption/FOLLOW_LINKS) Integer/MAX_VALUE visitor)
+  ([root pred]
+    (let [*paths (atom [])]
+      (Files/walkFileTree (as-path root) (EnumSet/of FileVisitOption/FOLLOW_LINKS) Integer/MAX_VALUE
+        (file-visitor
+          {:visit-file-fn        (fn [^Path file ^BasicFileAttributes attrs]
+                                   (when (pred file attrs)
+                                     (swap! *paths conj file))
+                                   FileVisitResult/CONTINUE)
+           :visit-file-failed-fn (fn [_ ^IOException e]
+                                   (cond
+                                     (instance? FileSystemLoopException e) FileVisitResult/SKIP_SUBTREE
+                                     (instance? NoSuchFileException e) FileVisitResult/SKIP_SUBTREE
+                                     :else (throw e)))}))
       @*paths)))
 
 
@@ -95,3 +104,35 @@
     (fn [^Path path ^BasicFileAttributes attrs]
       (and (.isRegularFile attrs)
         (string/ends-with? path ".java")))))
+
+
+(defn exists?
+  "Returns `true` if the file exists. Otherwise, `false`."
+  ([path]
+    (exists? path [LinkOption/NOFOLLOW_LINKS]))
+
+  ([path link-opts]
+    (Files/exists (as-path path) (into-array LinkOption link-opts))))
+
+
+(defn create-dirs!
+  "Creates directories using `java.nio.Files/createDirectories`. Also creates parents if needed."
+  ([root]
+    (create-dirs! root []))
+
+  ([root attrs]
+    (Files/createDirectories (as-path root) (into-array FileAttribute attrs))))
+
+
+(defn delete-dirs!
+  "Deletes the file tree. Doesn't follow symbolic links."
+  [root]
+  (Files/walkFileTree (as-path root) #{} Integer/MAX_VALUE
+    (file-visitor
+      {:visit-file-fn           (fn [^Path file _] (Files/delete file) FileVisitResult/CONTINUE)
+       :post-visit-directory-fn (fn [^Path dir _] (Files/delete dir) FileVisitResult/CONTINUE)
+       :visit-file-failed-fn    (fn [_ ^IOException e]
+                                  (cond
+                                    (instance? FileSystemLoopException e) FileVisitResult/SKIP_SUBTREE
+                                    (instance? NoSuchFileException e) FileVisitResult/SKIP_SUBTREE
+                                    :else (throw e)))})))
