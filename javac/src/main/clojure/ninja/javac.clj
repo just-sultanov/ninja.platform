@@ -7,10 +7,11 @@
     [clojure.string :as string]
     [clojure.tools.deps.alpha :as deps]
     [clojure.tools.deps.alpha.util.maven :as maven]
-    [com.brunobonacci.mulog :as mu]
+    [io.pedestal.log :as log]
     [ninja.response :as r])
   (:import
     (java.io
+      ByteArrayOutputStream
       IOException)
     (java.nio.file
       FileSystemLoopException
@@ -33,22 +34,6 @@
 
 
 (set! *warn-on-reflection* true)
-
-
-(defonce *publisher
-  (atom nil))
-
-
-(defn toggle-publisher!
-  "Toggle `com.brunobonacci.mulog` publisher."
-  [verbose?]
-  (let [stop-fn @*publisher]
-    (cond
-      (and verbose? (nil? stop-fn))
-      (reset! *publisher (mu/start-publisher! {:type :console, :pretty? true}))
-
-      (and (not verbose?) (some? stop-fn))
-      (do (stop-fn) (reset! *publisher nil)))))
 
 
 (defn ^Path make-path
@@ -192,13 +177,12 @@
            aliases          []
            verbose?         true
            compile?         true}}]
-  (toggle-publisher! verbose?)
-  (mu/log :ninja.javac.compile/starting :options options)
+  (log/info :ninja.javac.compile/starting options)
   (let [compiler ^JavaCompiler (ToolProvider/getSystemJavaCompiler)]
     (if-not compiler
       (let [result {:message "Can't find the Java compiler"
                     :options options}]
-        (mu/log :ninja.javac.compile/failed :result result)
+        (log/error :ninja.javac.compile/failed result)
         (r/as-error result))
       (let [source-path  (make-path source-path)
             target-path  (make-path target-path)
@@ -206,7 +190,7 @@
         (if-not (seq source-paths)
           (let [result {:message "Can't find the Java source files"
                         :options options}]
-            (mu/log :ninja.javac.compile/failed :result result)
+            (log/error :ninja.javac.compile/failed result)
             (r/as-error result))
           (let [classpath    (make-classpath {:deps-map deps-map, :aliases aliases})
                 compile-opts {:classpath        classpath
@@ -214,19 +198,20 @@
                               :compiler-options compiler-options
                               :source-paths     source-paths}
                 command      (make-command compile-opts)
-                result       {:message      (format "Processed %s files" (count source-paths))
-                              :options      options
-                              :command      command
-                              :compile-opts compile-opts}]
+                result       (cond-> {:message (format "Processed %s files" (count source-paths))
+                                      :options options}
+                               verbose? (assoc :command command :compile-opts compile-opts))]
             (if-not compile?
               (do
-                (mu/log :ninja.javac.compile/completed :result result)
+                (log/info :ninja.javac.compile/completed result)
                 (r/as-success result))
-              (let [_                  (create-dirs! target-path)
-                    compilation-result (.run compiler nil nil nil (into-array String command))
-                    result             (assoc result :compilation-result compilation-result)]
-                (mu/log :ninja.javac.compile/completed :result result)
-                (if (zero? compilation-result)
+              (let [_      (create-dirs! target-path)
+                    out    (ByteArrayOutputStream.)
+                    err    (ByteArrayOutputStream.)
+                    code   (.run compiler nil out err (into-array String command))
+                    result (assoc result :compilation-result {:code code, :info (str out), :warnings (str err)})]
+                (log/info :ninja.javac.compile/completed result)
+                (if (zero? code)
                   (r/as-success result)
                   (r/as-error (assoc result :message "Something went wrong")))))))))))
 
@@ -243,8 +228,7 @@
                :aliases          (edn/read-string aliases)
                :verbose?         (edn/read-string verbose?)
                :compile?         (edn/read-string compile?)})]
-    (if-not (r/error? res)
-      (shutdown-agents)
+    (when (r/error? res)
       (System/exit 1))))
 
 
@@ -256,7 +240,7 @@
                                "-source" "15"
                                "-Xlint:all"]
             :aliases          [:module.test/deps] ;; adds `ninja.platform/schema:0.0.1-alpha1` for testing classpath calculation
-            :verbose?         true
+            :verbose?         false
             :compile?         true})
 
   ;; a similar command for the main entry point

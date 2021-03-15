@@ -86,10 +86,10 @@
 
 (deftest compile-test
   (let [source-path      "src/test/resources/fixtures"
-        target-path      (str "classes-" (System/nanoTime))
+        target-path      (str "target/classes/" (System/nanoTime))
         compiler-options ["-Xlint:all"]
         aliases          [:module.test/deps]
-        verbose?         false
+        verbose?         true
         compile?         true
         options          {:source-path      source-path
                           :target-path      target-path
@@ -136,7 +136,7 @@
           (is (= options (:options data))))
 
         (testing "with zero compilation status"
-          (is (= 0 (:compilation-result data))))
+          (is (= {:code 0, :info "", :warnings ""} (:compilation-result data))))
 
         (testing "with correct compile options"
           (is (= target-path (str (:target-path compile-opts))))

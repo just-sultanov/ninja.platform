@@ -33,9 +33,14 @@
       <version>0.11.905</version>
     </dependency>
     <dependency>
-      <groupId>com.brunobonacci</groupId>
-      <artifactId>mulog</artifactId>
-      <version>0.6.5</version>
+      <groupId>io.pedestal</groupId>
+      <artifactId>pedestal.log</artifactId>
+      <version>0.5.8</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>2.14.1</version>
     </dependency>
     <dependency>
       <groupId>ninja.platform</groupId>
