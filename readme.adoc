@@ -1,5 +1,5 @@
-:javac-version: 0.0.1-SNAPSHOT
 :response-version: 0.1.0
+:javac-version: 0.0.1-SNAPSHOT
 :schema-version: 0.0.1-SNAPSHOT
 
 image:https://img.shields.io/github/license/just-sultanov/ninja.platform[license,link=license]
@@ -20,23 +20,23 @@ image:docs/design/logotype.full.transparent.png[logotype,800]
 | # | Module | Description | Version | Badges
 
 | {counter:module}
-| link:docs/ninja.tools/ninja.javac.adoc[ninja.platform/javac]
-| A Clojure library for compiling Java source code
-| `{javac-version}`
-| image:https://codecov.io/gh/just-sultanov/ninja.platform/branch/master/graph/badge.svg?token=HVEZAXE27E&flag=javac[codecov,link=https://codecov.io/gh/just-sultanov/ninja.platform]
-image:https://cljdoc.org/badge/ninja.platform/javac[cljdoc,link=https://cljdoc.org/d/ninja.platform/javac/CURRENT]
-image:https://img.shields.io/clojars/v/ninja.platform/javac.svg[clojars,link=https://clojars.org/ninja.platform/javac]
-
-| {counter:module}
-| link:docs/ninja.tools/ninja.response.adoc[ninja.platform/response]
+| link:docs/ninja.tools/response.adoc[ninja.platform/response]
 | A Clojure(Script) library for the unified responses
 | `{response-version}`
 | image:https://codecov.io/gh/just-sultanov/ninja.platform/branch/master/graph/badge.svg?token=HVEZAXE27E&flag=response[codecov,link=https://codecov.io/gh/just-sultanov/ninja.platform]
 image:https://cljdoc.org/badge/ninja.platform/response[cljdoc,link=https://cljdoc.org/d/ninja.platform/response/CURRENT]
 image:https://img.shields.io/clojars/v/ninja.platform/response.svg[clojars,link=https://clojars.org/ninja.platform/response]
 
+| {counter:module}
+| link:docs/ninja.tools/javac.adoc[ninja.platform/javac]
+| A Clojure library for compiling Java source code
+| `{javac-version}`
+| image:https://codecov.io/gh/just-sultanov/ninja.platform/branch/master/graph/badge.svg?token=HVEZAXE27E&flag=javac[codecov,link=https://codecov.io/gh/just-sultanov/ninja.platform]
+image:https://cljdoc.org/badge/ninja.platform/javac[cljdoc,link=https://cljdoc.org/d/ninja.platform/javac/CURRENT]
+image:https://img.shields.io/clojars/v/ninja.platform/javac.svg[clojars,link=https://clojars.org/ninja.platform/javac]
+
 //| {counter:module}
-//| link:docs/ninja.tools/ninja.schema.adoc[ninja.platform/schema]
+//| link:docs/ninja.tools/schema.adoc[ninja.platform/schema]
 //| A Clojure(Script) library for the data schemas
 //| `{schema-version}`
 //| image:https://codecov.io/gh/just-sultanov/ninja.platform/branch/master/graph/badge.svg?token=HVEZAXE27E&flag=schema[codecov,link=https://codecov.io/gh/just-sultanov/ninja.platform]
