@@ -103,7 +103,23 @@
                            set)
         includes?        #(string/includes? % "ninja/platform/schema/0.0.1-alpha1/schema-0.0.1-alpha1.jar")]
 
-    (testing "expected compilation result"
+    (testing "expected failed compilation result"
+      (let [bad-options (update options :source-path str "/bad-source-path")
+            {:as res :keys [type data meta]} (sut/compile bad-options)]
+
+        (testing "as a unified response"
+          (is (r/error? res))
+          (is (= :error type))
+          (is (nil? meta)))
+
+        (testing "with correct message"
+          (is (= "Can't find the Java source files" (:message data))))
+
+        (testing "with provided options without any changes"
+          (is (= bad-options (:options data))))))
+
+
+    (testing "expected successful compilation result"
       (let [{:as res :keys [type data meta]} (sut/compile options)
             compile-opts (:compile-opts data)
             command      (:command data)]
