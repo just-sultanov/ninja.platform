@@ -1,0 +1,66 @@
+:figure-caption!:
+
+image:https://codecov.io/gh/just-sultanov/ninja.platform/branch/master/graph/badge.svg?token=HVEZAXE27E&flag=javac[codecov,link=https://codecov.io/gh/just-sultanov/ninja.platform]
+image:https://cljdoc.org/badge/ninja.platform/javac[cljdoc,link=https://cljdoc.org/d/ninja.platform/javac/CURRENT]
+image:https://img.shields.io/clojars/v/ninja.platform/javac.svg[clojars,link=https://clojars.org/ninja.platform/javac]
+
+== ninja.platform/javac
+
+A Clojure library for compiling Java source code.
+
+
+=== Quick Start Guide
+
+Add the following dependency in your project:
+
+.project.clj or build.boot
+[source,clojure]
+----
+[ninja.platform/javac "0.0.1-SNAPSHOT"]
+----
+
+.deps.edn
+[source,clojure]
+----
+ninja.platform/javac {:mvn/version "0.0.1-SNAPSHOT"}
+----
+
+==== How to use this library with a Clojure CLI tool
+
+===== clojure -X
+
+[source,clojure]
+----
+{:aliases {:ninja.javac/compile {:extra-deps {ninja.platform/javac {:mvn/version "0.0.1-SNAPSHOT"}}
+                                 :exec-fn    ninja.javac/compile
+                                 :exec-args  {:source-path      "src/main/java"
+                                              :target-path      "classes"
+                                              :aliases          []
+                                              :verbose?         false
+                                              :compile?         true
+                                              :compiler-options ["-target" "15"
+                                                                 "-source" "15"
+                                                                 "-Xlint:all"]}}}}
+
+;; $ clojure -X:ninja.javac/compile
+----
+
+===== clojure -M
+
+Use compiler via -X instead of -M.
+
+[source,clojure]
+----
+{:aliases {:ninja.javac/main {:extra-deps {ninja.platform/javac {:mvn/version "0.0.1-SNAPSHOT"}}
+                              :main-opts  ["--main" "ninja.javac"]}}}
+
+;; $ clojure -M:ninja.javac/main src/main/java target/classes nil nil false true -target 15 -source 15 -Xlint:all
+;; Note: arguments [source-path target-path deps-map aliases verbose? compile? & compiler-options]
+----
+
+==== TODO
+
+* [ ] - Add a file watcher to compile files on the flight
+* [ ] - Add CLI to the main function
+* [ ] - Add an example project
+* [ ] - Add babashka support

@@ -36,7 +36,7 @@ If you need you can implement your own unified response - just implement `ninja.
 If you don't have enough predefined anomalies, just add new types of anomalies using the `add-anomaly!` or delete an existing one using the `remove-anomaly!` function.
 
 .Library API
-image::assets/ninja.response/api.png[API]
+image::assets/response/api.png[API]
 
 === Example
 
