@@ -43,6 +43,11 @@
       <version>2.14.1</version>
     </dependency>
     <dependency>
+      <groupId>hawk</groupId>
+      <artifactId>hawk</artifactId>
+      <version>0.2.11</version>
+    </dependency>
+    <dependency>
       <groupId>ninja.platform</groupId>
       <artifactId>response</artifactId>
       <version>0.1.0</version>
