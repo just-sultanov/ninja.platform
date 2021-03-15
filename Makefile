@@ -53,7 +53,7 @@ tree: ## Show deps tree
 
 clean: ## Clean
 	$(call header, "[${PROJECT_NAME}] Clean")
-	$(if $(strip $(ARGS)), @make clean-$(ARGS), @make clean-response clean-schema clean-javac)
+	$(if $(strip $(ARGS)), @make clean-$(ARGS), @make clean-response clean-javac clean-schema)
 
 repl: ## Run REPL
 	$(call header, "[${PROJECT_NAME}] Run REPL")
@@ -61,31 +61,31 @@ repl: ## Run REPL
 
 lint: ## Run linter
 	$(call header, "[${PROJECT_NAME}] Run linter")
-	$(if $(strip $(ARGS)), @make lint-$(ARGS), @make lint-response lint-schema lint-javac)
+	$(if $(strip $(ARGS)), @make lint-$(ARGS), @make lint-response lint-javac lint-schema)
 
 format: ## Run formatter
 	$(call header, "[${PROJECT_NAME}] Run formatter")
-	$(if $(strip $(ARGS)), @make format-$(ARGS), @make format-response format-schema format-javac)
+	$(if $(strip $(ARGS)), @make format-$(ARGS), @make format-response format-javac format-schema)
 
 test: ## Run tests
 	$(call header, "[${PROJECT_NAME}] Run tests")
-	$(if $(strip $(ARGS)), @make test-$(ARGS), @make test-response test-schema test-javac)
+	$(if $(strip $(ARGS)), @make test-$(ARGS), @make test-response test-javac test-schema)
 
 coverage: ## Upload coverage
 	$(call header, "[${PROJECT_NAME}] Upload coverage")
-	$(if $(strip $(ARGS)), @make coverage-$(ARGS), @make coverage-response coverage-schema coverage-javac)
+	$(if $(strip $(ARGS)), @make coverage-$(ARGS), @make coverage-response coverage-javac coverage-schema)
 
 pom: ## Generate pom
 	$(call header, "[${PROJECT_NAME}] Generate pom")
-	$(if $(strip $(ARGS)), @make pom-$(ARGS), @make pom-response pom-schema pom-javac)
+	$(if $(strip $(ARGS)), @make pom-$(ARGS), @make pom-response pom-javac pom-schema)
 
 jar: ## Build jar
 	$(call header, "[${PROJECT_NAME}] Build jar")
-	$(if $(strip $(ARGS)), @make jar-$(ARGS), @make jar-response jar-schema jar-javac)
+	$(if $(strip $(ARGS)), @make jar-$(ARGS), @make jar-response jar-javac jar-schema)
 
 install: ## Install jar
 	$(call header, "[${PROJECT_NAME}] Install jar")
-	$(if $(strip $(ARGS)), @make install-$(ARGS), @make install-response install-schema install-javac)
+	$(if $(strip $(ARGS)), @make install-$(ARGS), @make install-response install-javac install-schema)
 
 release: ## Release
 	$(call header, "[${PROJECT_NAME}] Release")
@@ -93,7 +93,7 @@ release: ## Release
 
 deploy: ## Deploy jar
 	$(call header, "[${PROJECT_NAME}] Deploy jar")
-	$(if $(strip $(ARGS)), @make deploy-$(ARGS), @make deploy-response deploy-schema deploy-javac)
+	$(if $(strip $(ARGS)), @make deploy-$(ARGS), @make deploy-response deploy-javac deploy-schema)
 
 
 
@@ -151,6 +151,58 @@ deploy-response:
 
 
 ####
+## ninja.platform/javac
+####
+
+clean-javac:
+	$(call header, "[${MODULE_NINJA_JAVAC}] Clean")
+	cd javac && rm -rf target
+
+repl-javac:
+	$(call header, "[${MODULE_NINJA_JAVAC}] Run REPL")
+	cd javac && clojure -M:project.bench/deps:project.bench/opts:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.clj/deps:project.test.cljs/deps:module.test/paths --main nrepl.cmdline
+
+lint-javac:
+	$(call header, "[${MODULE_NINJA_JAVAC}] Run linter")
+	cd javac && clj-kondo --lint src/dev/clojure:src/main/clojure:src/test/clojure
+	cljstyle check javac/src
+
+format-javac:
+	$(call header, "[${MODULE_NINJA_JAVAC}] Run formatter")
+	cljstyle fix javac/src
+
+test-javac:
+	$(call header, "[${MODULE_NINJA_JAVAC}] Run tests")
+	cd javac && clojure -M:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.clj/deps:module.test/deps:module.test/paths --main kaocha.runner
+
+coverage-javac:
+	$(call header, "[${MODULE_NINJA_JAVAC}] Upload coverage")
+	bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -F javac -f javac/target/coverage/codecov.json
+
+pom-javac:
+	$(call header, "[${MODULE_NINJA_JAVAC}] Generate pom")
+	cd javac && clojure -X:deps mvn-pom
+
+jar-javac:
+	$(call header, "[${MODULE_NINJA_JAVAC}] Build jar")
+	cd javac && clojure -X:project.build/deps uberjar :group-id ${MODULE_NINJA_JAVAC_GROUP_ID} :artifact-id ${MODULE_NINJA_JAVAC_ARTIFACT_ID} :version '"${MODULE_NINJA_JAVAC_VERSION}"' :sync-pom true :jar ${MODULE_NINJA_JAVAC_JAR}
+
+install-javac:
+	$(call header, "[${MODULE_NINJA_JAVAC}] Install jar")
+	cd javac && clojure -X:project.deploy/deps :installer :local :artifact '"${MODULE_NINJA_JAVAC_JAR}"'
+
+release-javac:
+	$(call header, "[${MODULE_NINJA_JAVAC}] Release")
+	$(if $(strip $(shell git status --porcelain 2>/dev/null | grep javac)),$(error You must commit all changes before bumping the project version. Bump failed),)
+	git tag --annotate -m "Release ${MODULE_NINJA_JAVAC_ARTIFACT_ID}/${MODULE_NINJA_JAVAC_VERSION}" ${MODULE_NINJA_JAVAC_ARTIFACT_ID}/${MODULE_NINJA_JAVAC_VERSION}
+
+deploy-javac:
+	$(call header, "[${MODULE_NINJA_JAVAC}] Deploy jar")
+	cd javac && clojure -X:project.deploy/deps :installer :remote :artifact '"${MODULE_NINJA_JAVAC_JAR}"'
+
+
+
+####
 ## ninja.platform/schema
 ####
 
@@ -200,55 +252,3 @@ release-schema:
 deploy-schema:
 	$(call header, "[${MODULE_NINJA_SCHEMA}] Deploy jar")
 	cd schema && clojure -X:project.deploy/deps :installer :remote :artifact '"${MODULE_NINJA_SCHEMA_JAR}"'
-
-
-
-####
-## ninja.platform/javac
-####
-
-clean-javac:
-	$(call header, "[${MODULE_NINJA_JAVAC}] Clean")
-	cd javac && rm -rf target
-
-repl-javac:
-	$(call header, "[${MODULE_NINJA_JAVAC}] Run REPL")
-	cd javac && clojure -M:project.bench/deps:project.bench/opts:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.clj/deps:project.test.cljs/deps:module.test/paths --main nrepl.cmdline
-
-lint-javac:
-	$(call header, "[${MODULE_NINJA_JAVAC}] Run linter")
-	cd javac && clj-kondo --lint src/dev/clojure:src/main/clojure:src/test/clojure
-	cljstyle check javac/src
-
-format-javac:
-	$(call header, "[${MODULE_NINJA_JAVAC}] Run formatter")
-	cljstyle fix javac/src
-
-test-javac:
-	$(call header, "[${MODULE_NINJA_JAVAC}] Run tests")
-	cd javac && clojure -M:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.clj/deps:module.test/deps:module.test/paths --main kaocha.runner
-
-coverage-javac:
-	$(call header, "[${MODULE_NINJA_JAVAC}] Upload coverage")
-	bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -F javac -f javac/target/coverage/codecov.json
-
-pom-javac:
-	$(call header, "[${MODULE_NINJA_JAVAC}] Generate pom")
-	cd javac && clojure -X:deps mvn-pom
-
-jar-javac:
-	$(call header, "[${MODULE_NINJA_JAVAC}] Build jar")
-	cd javac && clojure -X:project.build/deps uberjar :group-id ${MODULE_NINJA_JAVAC_GROUP_ID} :artifact-id ${MODULE_NINJA_JAVAC_ARTIFACT_ID} :version '"${MODULE_NINJA_JAVAC_VERSION}"' :sync-pom true :jar ${MODULE_NINJA_JAVAC_JAR}
-
-install-javac:
-	$(call header, "[${MODULE_NINJA_JAVAC}] Install jar")
-	cd javac && clojure -X:project.deploy/deps :installer :local :artifact '"${MODULE_NINJA_JAVAC_JAR}"'
-
-release-javac:
-	$(call header, "[${MODULE_NINJA_JAVAC}] Release")
-	$(if $(strip $(shell git status --porcelain 2>/dev/null | grep javac)),$(error You must commit all changes before bumping the project version. Bump failed),)
-	git tag --annotate -m "Release ${MODULE_NINJA_JAVAC_ARTIFACT_ID}/${MODULE_NINJA_JAVAC_VERSION}" ${MODULE_NINJA_JAVAC_ARTIFACT_ID}/${MODULE_NINJA_JAVAC_VERSION}
-
-deploy-javac:
-	$(call header, "[${MODULE_NINJA_JAVAC}] Deploy jar")
-	cd javac && clojure -X:project.deploy/deps :installer :remote :artifact '"${MODULE_NINJA_JAVAC_JAR}"'
