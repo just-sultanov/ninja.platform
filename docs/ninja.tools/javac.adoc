@@ -16,13 +16,13 @@ Add the following dependency in your project:
 .project.clj or build.boot
 [source,clojure]
 ----
-[ninja.platform/javac "0.0.1-SNAPSHOT"]
+[ninja.platform/javac "0.0.1"]
 ----
 
 .deps.edn
 [source,clojure]
 ----
-ninja.platform/javac {:mvn/version "0.0.1-SNAPSHOT"}
+ninja.platform/javac {:mvn/version "0.0.1"}
 ----
 
 ==== How to use this library with a Clojure CLI tool
@@ -31,7 +31,7 @@ ninja.platform/javac {:mvn/version "0.0.1-SNAPSHOT"}
 
 [source,clojure]
 ----
-{:aliases {:ninja.javac/compile {:extra-deps {ninja.platform/javac {:mvn/version "0.0.1-SNAPSHOT"}}
+{:aliases {:ninja.javac/compile {:extra-deps {ninja.platform/javac {:mvn/version "0.0.1"}}
                                  :exec-fn    ninja.javac/compile
                                  :exec-args  {:source-path      "src/main/java"
                                               :target-path      "classes"
@@ -40,7 +40,7 @@ ninja.platform/javac {:mvn/version "0.0.1-SNAPSHOT"}
                                               :compile?         true
                                               :compiler-options ["-target" "15"
                                                                  "-source" "15"
-                                                                 "-Xlint:all"]}}}}
+                                                                 "-Xlint:-options"]}}}}
 
 ;; $ clojure -X:ninja.javac/compile
 ----
@@ -51,10 +51,10 @@ Use compiler via -X instead of -M.
 
 [source,clojure]
 ----
-{:aliases {:ninja.javac/main {:extra-deps {ninja.platform/javac {:mvn/version "0.0.1-SNAPSHOT"}}
+{:aliases {:ninja.javac/main {:extra-deps {ninja.platform/javac {:mvn/version "0.0.1"}}
                               :main-opts  ["--main" "ninja.javac"]}}}
 
-;; $ clojure -M:ninja.javac/main src/main/java target/classes nil nil false true -target 15 -source 15 -Xlint:all
+;; $ clojure -M:ninja.javac/main src/main/java target/classes nil nil false true -target 15 -source 15 -Xlint:-options
 ;; Note: arguments [source-path target-path deps-map aliases verbose? compile? & compiler-options]
 ----
 

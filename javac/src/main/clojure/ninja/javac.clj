@@ -238,7 +238,7 @@
             :target-path      "target/classes"
             :compiler-options ["-target" "15"
                                "-source" "15"
-                               "-Xlint:all"]
+                               "-Xlint:-options"]
             :aliases          [:module.test/deps] ;; adds `ninja.platform/schema:0.0.1-alpha1` for testing classpath calculation
             :verbose?         false
             :compile?         true})
@@ -251,6 +251,6 @@
     "[:module.test/deps]" ;; :aliases
     "true" ;; :verbose?
     "true" ;; :compile?
-    "-target" "15" "-source" "15" "-Xlint:all" ;; :compiler-options
+    "-target" "15" "-source" "15" "-Xlint:-options" ;; :compiler-options
     )
   )

@@ -75,19 +75,19 @@
             (sut/make-command {:classpath    "some:classpath"
                                :source-paths ["fake/Example.java"]}))))
     (testing "with all options"
-      (is (= ["-cp" "some:classpath" "-target" "15" "-source" "15" "-Xlint:all" "-d" "target/classes" "fake/Example.java"]
+      (is (= ["-cp" "some:classpath" "-target" "15" "-source" "15" "-Xlint:-options" "-d" "target/classes" "fake/Example.java"]
             (sut/make-command {:classpath        "some:classpath"
                                :target-path      "target/classes"
                                :compiler-options ["-target" "15"
                                                   "-source" "15"
-                                                  "-Xlint:all"]
+                                                  "-Xlint:-options"]
                                :source-paths     ["fake/Example.java"]}))))))
 
 
 (deftest compile-test
   (let [source-path      "src/test/resources/fixtures"
         target-path      (str "target/classes/" (System/nanoTime))
-        compiler-options ["-Xlint:all"]
+        compiler-options ["-Xlint:-options"]
         aliases          [:module.test/deps]
         verbose?         true
         compile?         true
