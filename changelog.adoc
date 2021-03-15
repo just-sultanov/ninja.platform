@@ -81,9 +81,9 @@ Helper macros::
 [[javac]]
 === ninja.platform/javac
 
-==== Unreleased
+==== Released
 
-===== v0.1.0-SNAPSHOT
+===== v0.0.1 (2021-03-16)
 
 ====== Added
 
