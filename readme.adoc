@@ -1,5 +1,5 @@
 :response-version: 0.1.0
-:javac-version: 0.0.1-SNAPSHOT
+:javac-version: 0.0.1
 :schema-version: 0.0.1-SNAPSHOT
 
 image:https://img.shields.io/github/license/just-sultanov/ninja.platform[license,link=license]
