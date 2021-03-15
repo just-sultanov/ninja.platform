@@ -3,6 +3,7 @@
 === ninja tools
 
 - xref:response[ninja.platform/response]
+- xref:javac[ninja.platform/javac]
 
 [[response]]
 === ninja.platform/response
@@ -75,3 +76,15 @@ Unified success response helpers::
 
 Helper macros::
 - `ninja.response/safe` - Extended version of try-catch
+
+
+[[javac]]
+=== ninja.platform/javac
+
+==== Unreleased
+
+===== v0.1.0-SNAPSHOT
+
+====== Added
+
+A very simple API for compiling Java source code.
