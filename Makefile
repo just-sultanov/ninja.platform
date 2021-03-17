@@ -28,7 +28,7 @@ endef
 
 PROJECT_ROOT=$(shell pwd)
 CLJ_CONFIG=${PROJECT_ROOT}
-
+BUILD = $(shell git rev-list --count master)
 
 
 ####
@@ -53,7 +53,7 @@ tree: ## Show deps tree
 
 clean: ## Clean
 	$(call header, "[${PROJECT_NAME}] Clean")
-	$(if $(strip $(ARGS)), @make clean-$(ARGS), @make clean-response clean-javac clean-schema)
+	$(if $(strip $(ARGS)), @make clean-$(ARGS), @make clean-response clean-javac clean-fsm clean-schema)
 
 repl: ## Run REPL
 	$(call header, "[${PROJECT_NAME}] Run REPL")
@@ -61,31 +61,31 @@ repl: ## Run REPL
 
 lint: ## Run linter
 	$(call header, "[${PROJECT_NAME}] Run linter")
-	$(if $(strip $(ARGS)), @make lint-$(ARGS), @make lint-response lint-javac lint-schema)
+	$(if $(strip $(ARGS)), @make lint-$(ARGS), @make lint-response lint-javac lint-fsm lint-schema)
 
 format: ## Run formatter
 	$(call header, "[${PROJECT_NAME}] Run formatter")
-	$(if $(strip $(ARGS)), @make format-$(ARGS), @make format-response format-javac format-schema)
+	$(if $(strip $(ARGS)), @make format-$(ARGS), @make format-response format-javac format-fsm format-schema)
 
 test: ## Run tests
 	$(call header, "[${PROJECT_NAME}] Run tests")
-	$(if $(strip $(ARGS)), @make test-$(ARGS), @make test-response test-javac test-schema)
+	$(if $(strip $(ARGS)), @make test-$(ARGS), @make test-response test-javac test-fsm test-schema)
 
 coverage: ## Upload coverage
 	$(call header, "[${PROJECT_NAME}] Upload coverage")
-	$(if $(strip $(ARGS)), @make coverage-$(ARGS), @make coverage-response coverage-javac coverage-schema)
+	$(if $(strip $(ARGS)), @make coverage-$(ARGS), @make coverage-response coverage-javac coverage-fsm coverage-schema)
 
 pom: ## Generate pom
 	$(call header, "[${PROJECT_NAME}] Generate pom")
-	$(if $(strip $(ARGS)), @make pom-$(ARGS), @make pom-response pom-javac pom-schema)
+	$(if $(strip $(ARGS)), @make pom-$(ARGS), @make pom-response pom-javac pom-fsm pom-schema)
 
 jar: ## Build jar
 	$(call header, "[${PROJECT_NAME}] Build jar")
-	$(if $(strip $(ARGS)), @make jar-$(ARGS), @make jar-response jar-javac jar-schema)
+	$(if $(strip $(ARGS)), @make jar-$(ARGS), @make jar-response jar-javac jar-fsm jar-schema)
 
 install: ## Install jar
 	$(call header, "[${PROJECT_NAME}] Install jar")
-	$(if $(strip $(ARGS)), @make install-$(ARGS), @make install-response install-javac install-schema)
+	$(if $(strip $(ARGS)), @make install-$(ARGS), @make install-response install-javac install-fsm install-schema)
 
 release: ## Release
 	$(call header, "[${PROJECT_NAME}] Release")
@@ -93,7 +93,7 @@ release: ## Release
 
 deploy: ## Deploy jar
 	$(call header, "[${PROJECT_NAME}] Deploy jar")
-	$(if $(strip $(ARGS)), @make deploy-$(ARGS), @make deploy-response deploy-javac deploy-schema)
+	$(if $(strip $(ARGS)), @make deploy-$(ARGS), @make deploy-response deploy-javac deploy-fsm deploy-schema)
 
 
 
@@ -199,6 +199,59 @@ release-javac:
 deploy-javac:
 	$(call header, "[${MODULE_NINJA_JAVAC}] Deploy jar")
 	cd javac && clojure -X:project.deploy/deps :installer :remote :artifact '"${MODULE_NINJA_JAVAC_JAR}"'
+
+
+
+####
+## ninja.platform/fsm
+####
+
+clean-fsm:
+	$(call header, "[${MODULE_NINJA_FSM}] Clean")
+	cd fsm && rm -rf target
+
+repl-fsm:
+	$(call header, "[${MODULE_NINJA_FSM}] Run REPL")
+	cd fsm && clojure -M:project.bench/deps:project.bench/opts:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.clj/deps:project.test.cljs/deps:module.test/paths --main nrepl.cmdline --middleware '[cider.piggieback/wrap-cljs-repl]'
+
+lint-fsm:
+	$(call header, "[${MODULE_NINJA_FSM}] Run linter")
+	cd fsm && clj-kondo --lint src/dev/clojure:src/main/clojure:src/test/clojure
+	cljstyle check fsm/src
+
+format-fsm:
+	$(call header, "[${MODULE_NINJA_FSM}] Run formatter")
+	cljstyle fix fsm/src
+
+test-fsm:
+	$(call header, "[${MODULE_NINJA_FSM}] Run tests")
+	cd fsm && clojure -M:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.clj/deps:module.test/deps:module.test/paths --main kaocha.runner
+	cd fsm && clojure -M:project.dev/deps:module.dev/deps:module.dev/paths:project.test/deps:project.test.cljs/deps:module.test/deps:module.test/paths --main cljs-test-runner.main --dir src/test/clojure --out target/test-cljs
+
+coverage-fsm:
+	$(call header, "[${MODULE_NINJA_FSM}] Upload coverage")
+	bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -F fsm -f fsm/target/coverage/codecov.json
+
+pom-fsm:
+	$(call header, "[${MODULE_NINJA_FSM}] Generate pom")
+	cd fsm && clojure -X:deps mvn-pom
+
+jar-fsm:
+	$(call header, "[${MODULE_NINJA_FSM}] Build jar")
+	cd fsm && clojure -X:project.build/deps jar :group-id ${MODULE_NINJA_FSM_GROUP_ID} :artifact-id ${MODULE_NINJA_FSM_ARTIFACT_ID} :version '"${MODULE_NINJA_FSM_VERSION}"' :sync-pom true :jar ${MODULE_NINJA_FSM_JAR}
+
+install-fsm:
+	$(call header, "[${MODULE_NINJA_FSM}] Install jar")
+	cd fsm && clojure -X:project.deploy/deps :installer :local :artifact '"${MODULE_NINJA_FSM_JAR}"'
+
+release-fsm:
+	$(call header, "[${MODULE_NINJA_FSM}] Release")
+	$(if $(strip $(shell git status --porcelain 2>/dev/null | grep fsm)),$(error You must commit all changes before bumping the project version. Bump failed),)
+	git tag --annotate -m "Release ${MODULE_NINJA_FSM_ARTIFACT_ID}/${MODULE_NINJA_FSM_VERSION}" ${MODULE_NINJA_FSM_ARTIFACT_ID}/${MODULE_NINJA_FSM_VERSION}
+
+deploy-fsm:
+	$(call header, "[${MODULE_NINJA_FSM}] Deploy jar")
+	cd fsm && clojure -X:project.deploy/deps :installer :remote :artifact '"${MODULE_NINJA_FSM_JAR}"'
 
 
 

@@ -1,5 +1,6 @@
 :response-version: 0.1.0
 :javac-version: 0.0.1
+:fsm-version: 0.0.1-SNAPSHOT
 :schema-version: 0.0.1-SNAPSHOT
 
 image:https://img.shields.io/github/license/just-sultanov/ninja.platform[license,link=license]
@@ -34,6 +35,14 @@ image:https://img.shields.io/clojars/v/ninja.platform/response.svg[clojars,link=
 | image:https://codecov.io/gh/just-sultanov/ninja.platform/branch/master/graph/badge.svg?token=HVEZAXE27E&flag=javac[codecov,link=https://codecov.io/gh/just-sultanov/ninja.platform]
 image:https://cljdoc.org/badge/ninja.platform/javac[cljdoc,link=https://cljdoc.org/d/ninja.platform/javac/CURRENT]
 image:https://img.shields.io/clojars/v/ninja.platform/javac.svg[clojars,link=https://clojars.org/ninja.platform/javac]
+
+//| {counter:module}
+//| link:docs/ninja.tools/fsm.adoc[ninja.platform/fsm]
+//| A Clojure(Script) library for the finite state machines
+//| `{fsm-version}`
+//| image:https://codecov.io/gh/just-sultanov/ninja.platform/branch/master/graph/badge.svg?token=HVEZAXE27E&flag=fsm[codecov,link=https://codecov.io/gh/just-sultanov/ninja.platform]
+//image:https://cljdoc.org/badge/ninja.platform/fsm[cljdoc,link=https://cljdoc.org/d/ninja.platform/fsm/CURRENT]
+//image:https://img.shields.io/clojars/v/ninja.platform/fsm.svg[clojars,link=https://clojars.org/ninja.platform/fsm]
 
 //| {counter:module}
 //| link:docs/ninja.tools/schema.adoc[ninja.platform/schema]
