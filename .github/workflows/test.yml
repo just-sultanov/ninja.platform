@@ -9,7 +9,7 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     strategy:
       matrix:
-        java: [ 8, 11, 15 ]
+        java: [ 8, 11, 16 ]
     name: openjdk-${{ matrix.java }}
     steps:
       - name: Checkout
