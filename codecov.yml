@@ -11,6 +11,10 @@ coverage:
         target: 80%
         flags:
           - javac
+      fsm:
+        target: 80%
+        flags:
+          - fsm
       schema:
         target: 80%
         flags:
@@ -32,6 +36,10 @@ flags:
   javac:
     paths:
       - javac
+    carryforward: true
+  fsm:
+    paths:
+      - fsm
     carryforward: true
   schema:
     paths:

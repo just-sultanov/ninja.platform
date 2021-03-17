@@ -1,0 +1,30 @@
+:figure-caption!:
+
+image:https://codecov.io/gh/just-sultanov/ninja.platform/branch/master/graph/badge.svg?token=HVEZAXE27E&flag=fsm[codecov,link=https://codecov.io/gh/just-sultanov/ninja.platform]
+image:https://cljdoc.org/badge/ninja.platform/fsm[cljdoc,link=https://cljdoc.org/d/ninja.platform/fsm/CURRENT]
+image:https://img.shields.io/clojars/v/ninja.platform/fsm.svg[clojars,link=https://clojars.org/ninja.platform/fsm]
+
+== ninja.platform/fsm
+
+A Clojure(Script) library for the finite state machines.
+
+
+=== Quick Start Guide
+
+Add the following dependency in your project:
+
+.project.clj or build.boot
+[source,clojure]
+----
+[ninja.platform/fsm "0.0.1-SNAPSHOT"]
+----
+
+.deps.edn
+[source,clojure]
+----
+ninja.platform/fsm {:mvn/version "0.0.1-SNAPSHOT"}
+----
+
+==== Library API
+
+TBD

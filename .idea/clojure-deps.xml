@@ -21,8 +21,9 @@
       <list>
         <option value="file://$PROJECT_DIR$/deps.edn" />
         <option value="file://$PROJECT_DIR$/response/deps.edn" />
-        <option value="file://$PROJECT_DIR$/schema/deps.edn" />
         <option value="file://$PROJECT_DIR$/javac/deps.edn" />
+        <option value="file://$PROJECT_DIR$/fsm/deps.edn" />
+        <option value="file://$PROJECT_DIR$/schema/deps.edn" />
       </list>
     </option>
   </component>
