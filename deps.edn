@@ -17,7 +17,7 @@
 
              :project.test.cljs/deps {:extra-deps {olical/cljs-test-runner {:mvn/version "3.8.0"}}}
 
-             :project.build/deps     {:extra-deps {com.github.seancorfield/depstar {:mvn/version "2.0.193"}}
+             :project.build/deps     {:extra-deps {com.github.seancorfield/depstar {:mvn/version "2.0.206"}}
                                       :ns-default hf.depstar
                                       :exec-args  {}}
 
@@ -25,5 +25,5 @@
                                       :exec-fn    deps-deploy.deps-deploy/deploy
                                       :exec-args  {}}
 
-             :project.updates/deps   {:extra-deps {antq/antq {:mvn/version "0.11.2"}}}
+             :project.updates/deps   {:extra-deps {com.github.liquidz/antq {:mvn/version "0.12.2"}}}
              :project.updates/run    {:main-opts ["--main" "antq.core"]}}}
