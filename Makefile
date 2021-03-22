@@ -1,6 +1,6 @@
 .EXPORT_ALL_VARIABLES:
 .DEFAULT_GOAL := help
-.PHONY: help test response schema
+.PHONY: help test response javac fsm schema
 
 SHELL = bash
 
